@@ -4,8 +4,9 @@ const { Users } = require("../models/Users");
 
 // const userCtrl = require("../controllers/user");
 
-router.get("/", (req, res) => {
-  res.json("ok router");
+router.get("/", async (req, res) => {
+  const listOfUsers = await Users.findAll();
+  res.json(listOfUsers);
 });
 
 router.post("/", async (req, res) => {

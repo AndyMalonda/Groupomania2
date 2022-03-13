@@ -2,13 +2,20 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const db = require("./models");
+const cors = require("cors");
+
+app.use(express.json());
+app.use(cors());
 
 // Routers
-const userRoute = require("./routes/User");
-app.use("/user", userRoute);
+const userRouter = require("./routes/Users");
+app.use("/users", userRouter);
 
-const postRoute = require("./routes/Post");
-app.use("/post", postRoute);
+const postRouter = require("./routes/Posts");
+app.use("/posts", postRouter);
+
+const commentRouter = require("./routes/Comments");
+app.use("/comments", commentRouter);
 
 // App()
 db.sequelize
