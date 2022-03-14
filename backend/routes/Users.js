@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { Users } = require("../models/Users");
+const { Users } = require("../models");
 const bcrypt = require("bcrypt");
+const { sign } = require("jsonwebtoken");
 
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
@@ -10,7 +11,7 @@ router.post("/", async (req, res) => {
       email: email,
       password: hash,
     });
-    res.json("success");
+    res.json("Compte crée");
   });
 });
 
@@ -20,7 +21,8 @@ router.post("/login", async (req, res) => {
   if (!user) res.json({ error: "Email inconnu" });
   bcrypt.compare(password, user.password).then((match) => {
     if (!match) res.json({ error: "Mot de passe incorrect" });
-    res.json("Vous êtes connecté");
+    const token = sign({ email: user.email, id: user.id }, process.env.TOKEN);
+    res.json(token);
   });
 });
 

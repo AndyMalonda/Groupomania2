@@ -20,14 +20,22 @@ function Post() {
 
   const addComment = () => {
     axios
-      .post("http://localhost:3006/comments", {
-        message: newComment,
-        PostId: id,
-      })
+      .post(
+        "http://localhost:3006/comments",
+        {
+          message: newComment,
+          PostId: id,
+        },
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
       .then((response) => {
-        const commentToAdd = { message: newComment };
-        setComments([...comments, commentToAdd]);
-        setNewComment("");
+        if (response.data.error) {
+          alert(response.data.error);
+        } else {
+          const commentToAdd = { message: newComment };
+          setComments([...comments, commentToAdd]);
+          setNewComment("");
+        }
       });
   };
 
