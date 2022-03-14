@@ -20,7 +20,13 @@ function Home() {
     <div className="Home">
       {listOfPosts.map((value, key) => {
         return (
-          <div className="card w-50 p-3" key={value.id}>
+          <div
+            className="card w-50 p-3"
+            key={value.id}
+            onClick={() => {
+              navigate(`/posts/${value.id}`);
+            }}
+          >
             <img
               key={value.imageUrl}
               src={value.imageUrl}
@@ -34,15 +40,6 @@ function Home() {
               <p className="card-text" key={value.message}>
                 {value.message}
               </p>
-              <div>
-                <button
-                  onClick={() => {
-                    navigate(`/posts/${value.id}`);
-                  }}
-                >
-                  Sélectionner
-                </button>
-              </div>
             </div>
           </div>
         );
