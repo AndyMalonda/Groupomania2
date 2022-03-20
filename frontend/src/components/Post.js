@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
+import toast, { Toaster } from "react-hot-toast";
 
 // Style
 import "../styles/Post.css";
@@ -15,6 +16,10 @@ function Post() {
   const [newComment, setNewComment] = useState("");
   let navigate = useNavigate();
   const { authState } = useContext(AuthContext);
+  const notifyNewComment = () =>
+    toast("Vous avez commenté cette publication !");
+  const notifyDeleteComment = () =>
+    toast("Vous avez supprimé votre commentaire !");
 
   useEffect(() => {
     axios.get(`http://localhost:3006/posts/${id}`).then((response) => {
@@ -46,6 +51,7 @@ function Post() {
           };
           setComments([...comments, commentToAdd]);
           setNewComment("");
+          notifyNewComment();
         }
       });
   };
@@ -115,13 +121,16 @@ function Post() {
                           <div key={key} className="card-body">
                             <p key={comment.message}>{comment.message}</p>
                             {authState.username === comment.username && (
-                              <RiChatDeleteFill
+                              <button
+                                className="btn-outline-danger"
                                 onClick={() => {
                                   deleteComment(comment.id);
+                                  notifyDeleteComment();
                                 }}
-                              />
+                              >
+                                <RiChatDeleteFill />
+                              </button>
                             )}
-
                             <div className="d-flex justify-content-between">
                               <div className="d-flex flex-row align-items-center">
                                 <img
@@ -150,6 +159,16 @@ function Post() {
           </div>
         </div>
       </div>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+        }}
+      />
     </div>
   );
 }

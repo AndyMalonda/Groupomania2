@@ -4,12 +4,16 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import "../styles/CreatePost.css";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 function CreatePost() {
   const initialValues = { title: "", message: "", imageUrl: "" };
 
+  const notify = () => toast("Vous avez partagé un nouveau post !");
+
   const onSubmit = (data) => {
     axios.post("http://localhost:3006/posts", data).then((response) => {
+      notify();
       navigate("/");
     });
   };
@@ -52,6 +56,16 @@ function CreatePost() {
           </div>
         </Form>
       </Formik>
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+        }}
+      />
     </div>
   );
 }

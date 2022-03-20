@@ -5,3 +5,14 @@
 .col-md-8 {
   width: 100% !important;
 }
+
+.btn-outline-danger {
+  border-radius: 30%;
+  font-size: 12px;
+  background-color: white;
+}
+
+button:active {
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}

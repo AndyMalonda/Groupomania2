@@ -5,6 +5,7 @@ import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineComment } from "react-icons/ai";
+import toast, { Toaster } from "react-hot-toast";
 
 function Home() {
   let navigate = useNavigate();
@@ -34,10 +35,12 @@ function Home() {
           listOfPosts.map((post) => {
             if (post.id == postId) {
               if (response.data.liked) {
+                notifyLike();
                 return { ...post, Likes: [...post.Likes, 0] };
               } else {
                 const likesArray = post.Likes;
                 likesArray.pop();
+                notifyUnlike();
                 return { ...post, Likes: likesArray };
               }
             } else {
@@ -47,6 +50,9 @@ function Home() {
         );
       });
   };
+
+  const notifyLike = () => toast("Vous aimez cette publication !");
+  const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   return (
     <div className="Home">
@@ -95,6 +101,16 @@ function Home() {
           </div>
         );
       })}
+      <Toaster
+        position="bottom-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+        }}
+      />
     </div>
   );
 }

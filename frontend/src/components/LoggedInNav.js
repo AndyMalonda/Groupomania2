@@ -3,6 +3,7 @@ import logo from "../icon.svg";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import { AuthContext } from "../contexts/auth-context";
+import { MdPostAdd, MdLogout, MdOutlineFeed } from "react-icons/md";
 
 export default function LoggedInNav() {
   const [authState, setAuthState] = useState(AuthContext);
@@ -28,18 +29,18 @@ export default function LoggedInNav() {
           <ul className="navbar-nav">
             <li className="nav-item">{authState.username}</li>
             <li className="nav-item">
-              <Link to="/posts" className="nav-link">
-                Feed
+              <Link to="/posts" className="nav-btn">
+                <MdOutlineFeed className="nav-icon" />
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/createpost" className="nav-link">
-                Créer un post
+              <Link to="/createpost" className="nav-btn">
+                <MdPostAdd className="nav-icon" />
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/login" onClick={clearSession} className="nav-link">
-                Se déconnecter
+              <Link to="/login" onClick={clearSession} className="nav-btn">
+                <MdLogout className="nav-icon" />
               </Link>
             </li>
           </ul>

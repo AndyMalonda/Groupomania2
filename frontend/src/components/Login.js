@@ -60,6 +60,9 @@ function Login() {
           </button>
         </Form>
       </Formik>
+      <p>
+        Pas encore de compte ? <a href="/registration">S'inscrire</a>
+      </p>
     </div>
   );
 }

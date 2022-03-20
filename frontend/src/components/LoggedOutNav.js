@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import logo from "../icon.svg";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
+import { MdLogin, MdPersonAddAlt1 } from "react-icons/md";
 
 export default function Navbar() {
   return (
@@ -14,13 +15,13 @@ export default function Navbar() {
           </a>
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link to="/login" className="nav-link">
-                Connexion
+              <Link to="/login" className="nav-btn">
+                <MdLogin />
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/registration" className="nav-link">
-                Inscription
+              <Link to="/registration" className="nav-btn">
+                <MdPersonAddAlt1 />
               </Link>
             </li>
           </ul>
