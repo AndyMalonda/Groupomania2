@@ -1,33 +1,62 @@
 import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "./Home.css";
-import "../bootstrap.min.css";
+import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
+import { FaRegThumbsUp } from "react-icons/fa";
+import { AiOutlineComment } from "react-icons/ai";
 
 function Home() {
   let navigate = useNavigate();
 
   const [listOfPosts, setListOfPosts] = useState([]);
   useEffect(() => {
-    axios.get("http://localhost:3006/posts").then((response) => {
-      console.log(response);
-      setListOfPosts(response.data);
-    });
+    if (!sessionStorage.getItem("token")) {
+      navigate("/login");
+    } else {
+      axios.get("http://localhost:3006/posts").then((response) => {
+        console.log(response);
+        setListOfPosts(response.data);
+      });
+    }
   }, []);
+
+  const likePost = (postId) => {
+    axios
+      .post(
+        "http://localhost:3006/like",
+        { PostId: postId },
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setListOfPosts(
+          listOfPosts.map((post) => {
+            if (post.id == postId) {
+              if (response.data.liked) {
+                return { ...post, Likes: [...post.Likes, 0] };
+              } else {
+                const likesArray = post.Likes;
+                likesArray.pop();
+                return { ...post, Likes: likesArray };
+              }
+            } else {
+              return post;
+            }
+          })
+        );
+      });
+  };
 
   return (
     <div className="Home">
       {listOfPosts.map((value, key) => {
         return (
-          <div
-            className="card w-50 p-3"
-            key={value.id}
-            onClick={() => {
-              navigate(`/posts/${value.id}`);
-            }}
-          >
+          <div className="card w-50 p-3" key={value.id}>
             <img
+              onClick={() => {
+                navigate(`/posts/${value.id}`);
+              }}
               key={value.imageUrl}
               src={value.imageUrl}
               className="card-img-top"
@@ -40,6 +69,26 @@ function Home() {
               <p className="card-text" key={value.message}>
                 {value.message}
               </p>
+              <div className="d-flex justify-content-center">
+                <div>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => {
+                      likePost(value.id);
+                    }}
+                  >
+                    <FaRegThumbsUp />
+                  </button>
+                  <div>{value.Likes.length}</div>
+                </div>
+                <div>
+                  <button className="btn btn-outline-primary">
+                    <AiOutlineComment />
+                  </button>
+                  <div>cnt</div>
+                  {/* {value.Comments.length} */}
+                </div>
+              </div>
             </div>
           </div>
         );

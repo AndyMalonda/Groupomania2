@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       username: {
         type: DataTypes.STRING,
-        allowNull: true, // remettre sur false après test
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
@@ -32,10 +32,10 @@ module.exports = (sequelize, DataTypes) => {
     { timestamps: false }
   );
 
-  // Users.associate = (models) => {
-  //   Users.hasMany(models.Posts, {
-  //     onDelete: "cascade",
-  //   });
-  // };
+  Users.associate = (models) => {
+    Users.hasMany(models.Likes, {
+      onDelete: "cascade",
+    });
+  };
   return Users;
 };

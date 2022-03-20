@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { Posts } = require("../models");
+const { Posts, Likes, Comments } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 
 // const postCtrl = require("../controllers/post");
 
 router.get("/", async (req, res) => {
-  const listOfPosts = await Posts.findAll({ order: [["id", "DESC"]] });
+  const listOfPosts = await Posts.findAll(
+    { include: [Likes] },
+    { order: ["id", "DESC"] }
+  );
   res.json(listOfPosts);
 });
 

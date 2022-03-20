@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import "./Login.css";
+import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/auth-context";
 
 function Login() {
   const initialValues = { email: "", password: "" };
+  const { setAuthState } = useContext(AuthContext);
 
   let navigate = useNavigate();
 
@@ -15,7 +17,12 @@ function Login() {
         alert(response.data.error);
       } else {
         console.log("connecté");
-        sessionStorage.setItem("token", response.data);
+        sessionStorage.setItem("token", response.data.token);
+        setAuthState({
+          username: response.data.username,
+          id: response.data.id,
+          status: true,
+        });
         navigate("/");
       }
     });
@@ -44,6 +51,7 @@ function Login() {
               className="form-control"
               id="inputPassword"
               name="password"
+              type="password"
               placeholder="ex: MotDePasse123*"
             />
           </div>
