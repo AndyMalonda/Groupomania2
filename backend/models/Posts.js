@@ -19,16 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-    },
-    { timestamps: false }
+    }
+    // { timestamps: false }
   );
 
   Posts.associate = (models) => {
     Posts.hasMany(models.Comments, {
       onDelete: "cascade",
     });
-  };
-  Posts.associate = (models) => {
+
     Posts.hasMany(models.Likes, {
       onDelete: "cascade",
     });

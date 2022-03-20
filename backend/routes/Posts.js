@@ -8,6 +8,7 @@ const { validateToken } = require("../middlewares/auth");
 router.get("/", async (req, res) => {
   const listOfPosts = await Posts.findAll(
     { include: [Likes] },
+    // { include: [Comments] },
     { order: ["id", "DESC"] }
   );
   res.json(listOfPosts);

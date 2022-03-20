@@ -53,10 +53,8 @@ function Home() {
       {listOfPosts.map((value, key) => {
         return (
           <div className="card w-50 p-3" key={value.id}>
+            <div>{value.createdAt}</div>
             <img
-              onClick={() => {
-                navigate(`/posts/${value.id}`);
-              }}
               key={value.imageUrl}
               src={value.imageUrl}
               className="card-img-top"
@@ -82,11 +80,15 @@ function Home() {
                   <div>{value.Likes.length}</div>
                 </div>
                 <div>
-                  <button className="btn btn-outline-primary">
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => {
+                      navigate(`/posts/${value.id}`);
+                    }}
+                  >
                     <AiOutlineComment />
                   </button>
                   <div>cnt</div>
-                  {/* {value.Comments.length} */}
                 </div>
               </div>
             </div>
