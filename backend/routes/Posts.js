@@ -5,13 +5,14 @@ const { validateToken } = require("../middlewares/auth");
 
 // const postCtrl = require("../controllers/post");
 
-router.get("/", async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
   const listOfPosts = await Posts.findAll(
     { include: [Likes] },
     // { include: [Comments] },
     { order: ["id", "DESC"] }
   );
-  res.json(listOfPosts);
+  const likedPosts = await Likes.findAll({ where: { UserId: req.user.id } });
+  res.json({ listOfPosts: listOfPosts, likedPosts: likedPosts });
 });
 
 router.get("/:id", async (req, res) => {

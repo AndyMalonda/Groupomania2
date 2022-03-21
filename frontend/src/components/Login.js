@@ -1,13 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
+import { MdRemoveRedEye } from "react-icons/md";
 
 function Login() {
   const initialValues = { email: "", password: "" };
   const { setAuthState } = useContext(AuthContext);
+  const [passwordShown, setPasswordShown] = useState(false);
 
   let navigate = useNavigate();
 
@@ -26,6 +28,11 @@ function Login() {
         navigate("/");
       }
     });
+  };
+
+  const togglePassword = (e) => {
+    // e.preventDefault();
+    setPasswordShown(!passwordShown);
   };
 
   return (
@@ -51,9 +58,17 @@ function Login() {
               className="form-control"
               id="inputPassword"
               name="password"
-              type="password"
+              type={passwordShown ? "text" : "password"}
               placeholder="ex: MotDePasse123*"
             />
+            <div>
+              <input
+                type="checkbox"
+                name="showPassword"
+                onChange={togglePassword}
+              />
+              <label for="showPassword">Montrer le mot de passe</label>
+            </div>
           </div>
           <button className="btn btn-primary" type="submit">
             Se connecter

@@ -6,19 +6,31 @@ import { useNavigate } from "react-router-dom";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineComment } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
+import { formatDate } from "../services/utilities";
 
 function Home() {
   let navigate = useNavigate();
 
   const [listOfPosts, setListOfPosts] = useState([]);
+  const [likedPosts, setLikedPosts] = useState([]);
+
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
       navigate("/login");
     } else {
-      axios.get("http://localhost:3006/posts").then((response) => {
-        console.log(response);
-        setListOfPosts(response.data);
-      });
+      axios
+        .get("http://localhost:3006/posts", {
+          headers: { token: sessionStorage.getItem("token") },
+        })
+        .then((response) => {
+          console.log(response);
+          setListOfPosts(response.data.listOfPosts);
+          setLikedPosts(
+            response.data.likedPosts.map((like) => {
+              return like.PostId;
+            })
+          );
+        });
     }
   }, []);
 
@@ -36,7 +48,9 @@ function Home() {
             if (post.id == postId) {
               if (response.data.liked) {
                 notifyLike();
-                return { ...post, Likes: [...post.Likes, 0] };
+                post.Likes.push(0);
+                return post;
+                // return { ...post, Likes: [...post.Likes, 0] };
               } else {
                 const likesArray = post.Likes;
                 likesArray.pop();
@@ -48,6 +62,15 @@ function Home() {
             }
           })
         );
+        if (likedPosts.includes(postId)) {
+          setLikedPosts(
+            likedPosts.filter((id) => {
+              return id != postId;
+            })
+          );
+        } else {
+          setLikedPosts([...likedPosts, postId]);
+        }
       });
   };
 
@@ -59,7 +82,7 @@ function Home() {
       {listOfPosts.map((value, key) => {
         return (
           <div className="card w-50 p-3" key={value.id}>
-            <div>{value.createdAt}</div>
+            <div>{formatDate(value.createdAt)}</div>
             <img
               key={value.imageUrl}
               src={value.imageUrl}
@@ -76,12 +99,23 @@ function Home() {
               <div className="d-flex justify-content-center">
                 <div>
                   <button
-                    className="btn btn-outline-primary"
+                    // className="btn btn-outline-primary"
+                    className={
+                      likedPosts.includes(value.id)
+                        ? "btn btn-primary"
+                        : "btn btn-outline-primary"
+                    }
                     onClick={() => {
                       likePost(value.id);
                     }}
                   >
-                    <FaRegThumbsUp />
+                    <FaRegThumbsUp
+                      className={
+                        likedPosts.includes(value.id)
+                          ? "unlike-btn"
+                          : "like-btn"
+                      }
+                    />
                   </button>
                   <div>{value.Likes.length}</div>
                 </div>
