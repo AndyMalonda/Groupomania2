@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "../styles/Home.css";
@@ -7,15 +7,17 @@ import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineComment } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
 import { formatDate } from "../services/utilities";
+import { AuthContext } from "../contexts/auth-context";
 
 function Home() {
   let navigate = useNavigate();
 
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
+  const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    if (!sessionStorage.getItem("token")) {
+    if (!authState.status) {
       navigate("/login");
     } else {
       axios

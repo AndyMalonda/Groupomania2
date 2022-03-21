@@ -1,24 +1,28 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 // possibilité d'installer Yup pour ValidationSchema
 import axios from "axios";
 import "../styles/CreatePost.css";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import { AuthContext } from "../contexts/auth-context";
 
 function CreatePost() {
+  const { authState } = useContext(AuthContext);
   const initialValues = { title: "", message: "", imageUrl: "" };
-
-  const notify = () => toast("Vous avez partagé un nouveau post !");
+  let navigate = useNavigate();
+  const notify = () => toast("Votre post a été publié !");
 
   const onSubmit = (data) => {
-    axios.post("http://localhost:3006/posts", data).then((response) => {
-      notify();
-      navigate("/");
-    });
+    if (!authState.status) {
+      navigate("/login");
+    } else {
+      axios.post("http://localhost:3006/posts", data).then((response) => {
+        notify();
+        navigate("/");
+      });
+    }
   };
-
-  let navigate = useNavigate();
 
   return (
     <div className="CreatePost">
@@ -28,12 +32,12 @@ function CreatePost() {
             <div className="row">
               <div className="col w-90 p-3">
                 <div className="card">
-                  <h5 className="card-title">Image</h5>
+                  <h5 className="card-title">Image (facultatif)</h5>
 
                   <Field
                     id="inputCreatePost"
                     name="imageUrl"
-                    placeholder="ex: photodechat.jpg"
+                    placeholder="ex: http://chatsmagazine/photos/photodechat1.jpg"
                   />
                   <h5 className="card-title">Titre </h5>
                   <Field

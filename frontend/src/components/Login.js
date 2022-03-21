@@ -67,7 +67,7 @@ function Login() {
                 name="showPassword"
                 onChange={togglePassword}
               />
-              <label for="showPassword">Montrer le mot de passe</label>
+              <label htmlFor="showPassword">Montrer le mot de passe</label>
             </div>
           </div>
           <button className="btn btn-primary" type="submit">

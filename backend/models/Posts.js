@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       message: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(3500),
         allowNull: false,
       },
       imageUrl: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(600),
         allowNull: false,
       },
     }
