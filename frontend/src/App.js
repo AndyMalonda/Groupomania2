@@ -16,7 +16,7 @@ import PageNotFound from "./components/PageNotFound";
 
 // Style
 import "./styles/App.css";
-import "./bootstrap.min.css";
+// import "./bootstrap.min.css";
 
 function App() {
   const [authState, setAuthState] = useState({
