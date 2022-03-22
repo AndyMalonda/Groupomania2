@@ -1,20 +1,26 @@
+// Scripts
 import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "../styles/Home.css";
 import { useNavigate } from "react-router-dom";
+
+// Style
+import "../styles/Home.css";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineComment } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
+
+// Utilities
 import { formatDate } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
 
 function Home() {
-  let navigate = useNavigate();
-
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const notifyLike = () => toast("Vous aimez cette publication !");
+  const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   useEffect(() => {
     if (!authState.status) {
@@ -47,7 +53,7 @@ function Home() {
         console.log(response.data);
         setListOfPosts(
           listOfPosts.map((post) => {
-            if (post.id == postId) {
+            if (post.id === postId) {
               if (response.data.liked) {
                 notifyLike();
                 post.Likes.push(0);
@@ -67,7 +73,7 @@ function Home() {
         if (likedPosts.includes(postId)) {
           setLikedPosts(
             likedPosts.filter((id) => {
-              return id != postId;
+              return id !== postId;
             })
           );
         } else {
@@ -75,9 +81,6 @@ function Home() {
         }
       });
   };
-
-  const notifyLike = () => toast("Vous aimez cette publication !");
-  const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   return (
     <div className="Home">
