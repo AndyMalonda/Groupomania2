@@ -118,11 +118,7 @@ function Login() {
             </Formik>
           </Box>
           <Grid container justifyContent="center">
-            <Grid item>
-              <Link href="/register" variant="body2">
-                {"Pas encore de compte ?"}
-              </Link>
-            </Grid>
+            <Link href="/register">Pas encore de compte ?</Link>
           </Grid>
         </Container>
       </ThemeProvider>

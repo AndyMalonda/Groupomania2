@@ -13,8 +13,11 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
 import Navbar from "./components/Navbar";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 function App() {
+  const theme = createTheme({ justififyContent: "center" });
+
   const [authState, setAuthState] = useState({
     username: "",
     id: 0,
@@ -40,8 +43,8 @@ function App() {
   }, [authState]);
 
   return (
-    <div className="App">
-      <AuthContext.Provider value={{ authState, setAuthState }}>
+    <AuthContext.Provider value={{ authState, setAuthState }}>
+      <ThemeProvider theme={theme}>
         {/* {authState.status ? <LoggedInNav /> : <LoggedOutNav />} */}
         <Navbar></Navbar>
 
@@ -54,8 +57,8 @@ function App() {
           <Route path="/createpost" element={<CreatePost />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
-      </AuthContext.Provider>
-    </div>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 

@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 // MUI
 import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
@@ -19,7 +18,6 @@ import { TextField } from "formik-mui";
 
 // Style
 import LanguageIcon from "@mui/icons-material/Language";
-const theme = createTheme();
 
 function Register() {
   const initialValues = {
@@ -54,97 +52,91 @@ function Register() {
 
   return (
     <div className="Register">
-      <ThemeProvider theme={theme}>
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <Box
-            sx={{
-              marginTop: 8,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
+      <Container component="main" maxWidth="xs" sx={{ marginBottom: 4 }}>
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LanguageIcon />
+          </Avatar>
+          <Typography component="h2" variant="h5">
+            Inscription
+          </Typography>
+          <Formik
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LanguageIcon />
-            </Avatar>
-            <Typography component="h2" variant="h5">
-              Inscription
-            </Typography>
-            <Formik
-              initialValues={initialValues}
-              onSubmit={onSubmit}
-              validationSchema={validationSchema}
-            >
-              <Form>
-                <Field
-                  component={TextField}
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Adresse email"
-                  name="email"
-                  placeholder="ex: j.doe@gmail.com"
-                  autoComplete="email"
-                  autoFocus
-                />
+            <Form>
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Adresse email"
+                name="email"
+                placeholder="ex: j.doe@gmail.com"
+                autoComplete="email"
+                autoFocus
+              />
 
-                <Field
-                  component={TextField}
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="username"
-                  label="Nom d'utilisateur"
-                  type="text"
-                  id="inputusername"
-                  placeholder="ex: John Doe"
-                />
-                <Field
-                  component={TextField}
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Mot de passe"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  placeholder="ex: M0tdepa$$e1*"
-                />
-                <Field
-                  component={TextField}
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="passwordConfirmation"
-                  label="Mot de passe"
-                  type="password"
-                  id="inputPasswordConfirmation"
-                  autoComplete="current-password"
-                  placeholder="ex: M0tdepa$$e1*"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  S'inscrire
-                </Button>
-              </Form>
-            </Formik>
-          </Box>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <Link href="/login" variant="body2">
-                {"Déjà inscrit·e ?"}
-              </Link>
-            </Grid>
-          </Grid>
-        </Container>
-      </ThemeProvider>
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                name="username"
+                label="Nom d'utilisateur"
+                type="text"
+                id="inputusername"
+                placeholder="ex: John Doe"
+              />
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Mot de passe"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                placeholder="ex: M0tdepa$$e1*"
+              />
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                name="passwordConfirmation"
+                label="Mot de passe"
+                type="password"
+                id="inputPasswordConfirmation"
+                autoComplete="current-password"
+                placeholder="ex: M0tdepa$$e1*"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                S'inscrire
+              </Button>
+            </Form>
+          </Formik>
+        </Box>
+        <Grid container justifyContent="center">
+          <Link href="/login">Déjà inscrit·e ?</Link>
+        </Grid>
+      </Container>
     </div>
   );
 }

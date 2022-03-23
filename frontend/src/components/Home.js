@@ -28,6 +28,7 @@ import {
   CardContent,
   Typography,
   Divider,
+  Container,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -113,66 +114,72 @@ function Home() {
     <div className="Home">
       {listOfPosts.map((value, key) => {
         return (
-          <Card sx={{ maxWidth: 768, m: 2 }} key={value.id}>
-            <CardHeader
-              avatar={
-                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                  AM
-                </Avatar>
-              }
-              action={
-                <>
-                  <IconButton aria-label="flag" onClick={handleFlagClick}>
-                    <Tooltip title="Signaler">
-                      <ReportIcon />
-                    </Tooltip>
-                  </IconButton>
-                  {flagDialog(openFlagDialog, handleFlagDialogClose)}
-                </>
-              }
-              title={value.title}
-              subheader={formatDate(value.createdAt)}
-            />
-            {value.imageUrl ? (
-              <CardMedia component="img" height="400" image={value.imageUrl} />
-            ) : (
-              <Divider />
-            )}
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                {value.message}
-              </Typography>
-            </CardContent>
-            <CardActions disableSpacing>
-              <IconButton
-                aria-label="add to favorites"
-                onClick={() => {
-                  likePost(value.id);
-                }}
-              >
-                <SvgIcon
-                  sx={{ fontSize: 50, color: red[500] }}
-                  component={
-                    likedPosts.includes(value.id)
-                      ? FavoriteIcon
-                      : FavoriteBorderIcon
-                  }
+          <Container sx={{ justifyContent: "center" }}>
+            <Card sx={{ maxWidth: 768, m: 2 }} key={value.id}>
+              <CardHeader
+                avatar={
+                  <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                    AM
+                  </Avatar>
+                }
+                action={
+                  <>
+                    <IconButton aria-label="flag" onClick={handleFlagClick}>
+                      <Tooltip title="Signaler">
+                        <ReportIcon />
+                      </Tooltip>
+                    </IconButton>
+                    {flagDialog(openFlagDialog, handleFlagDialogClose)}
+                  </>
+                }
+                title={value.title}
+                subheader={formatDate(value.createdAt)}
+              />
+              {value.imageUrl ? (
+                <CardMedia
+                  component="img"
+                  height="400"
+                  image={value.imageUrl}
                 />
-              </IconButton>
+              ) : (
+                <Divider />
+              )}
+              <CardContent>
+                <Typography variant="body2" color="text.secondary">
+                  {value.message}
+                </Typography>
+              </CardContent>
+              <CardActions disableSpacing>
+                <IconButton
+                  aria-label="add to favorites"
+                  onClick={() => {
+                    likePost(value.id);
+                  }}
+                >
+                  <SvgIcon
+                    sx={{ fontSize: 50, color: red[500] }}
+                    component={
+                      likedPosts.includes(value.id)
+                        ? FavoriteIcon
+                        : FavoriteBorderIcon
+                    }
+                  />
+                </IconButton>
 
-              <div>{value.Likes.length}</div>
+                <div>{value.Likes.length}</div>
 
-              <button
-                className="btn btn-outline-primary"
-                onClick={() => {
-                  navigate(`/posts/${value.id}`);
-                }}
-              >
-                <AiOutlineComment />
-              </button>
-              <div>cnt</div>
-            </CardActions>
-          </Card>
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => {
+                    navigate(`/posts/${value.id}`);
+                  }}
+                >
+                  <AiOutlineComment />
+                </button>
+                <div>cnt</div>
+              </CardActions>
+            </Card>
+          </Container>
         );
       })}
       <Toaster
