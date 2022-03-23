@@ -11,7 +11,7 @@ import LoggedInNav from "./components/LoggedInNav";
 import LoggedOutNav from "./components/LoggedOutNav";
 import Post from "./components/Post";
 import Login from "./components/Login";
-import Registration from "./components/Registration";
+import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
 
 // Style
@@ -51,7 +51,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/posts" element={<Home />} />
           <Route path="/posts/:id" element={<Post />} />
           <Route path="/createpost" element={<CreatePost />} />

@@ -1,9 +1,9 @@
 // Scripts
-import React, { useContext, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/auth-context";
 
 // MUI
 import CssBaseline from "@mui/material/CssBaseline";
@@ -21,38 +21,39 @@ import { TextField } from "formik-mui";
 import LanguageIcon from "@mui/icons-material/Language";
 const theme = createTheme();
 
-function Login() {
-  const initialValues = { email: "", password: "" };
-  const { setAuthState } = useContext(AuthContext);
-  const [passwordShown, setPasswordShown] = useState(false);
+function Register() {
+  const initialValues = {
+    email: "",
+    username: "",
+    password: "",
+    passwordConfirmation: "",
+  };
 
   let navigate = useNavigate();
 
   const onSubmit = (data) => {
-    console.log(data);
-    axios.post("http://localhost:3006/users/login", data).then((response) => {
-      if (response.data.error) {
-        alert(response.data.error);
-      } else {
-        console.log("connecté");
-        sessionStorage.setItem("token", response.data.token);
-        setAuthState({
-          username: response.data.username,
-          id: response.data.id,
-          status: true,
-        });
-        navigate("/");
-      }
+    axios.post("http://localhost:3006/users", data).then(() => {
+      navigate("/");
     });
   };
 
-  const togglePassword = (e) => {
-    // e.preventDefault();
-    setPasswordShown(!passwordShown);
-  };
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Adresse email incorrecte")
+      .required("Champs requis"),
+    password: Yup.string()
+      .required("Champs requis")
+      .min(8, "Doit contenir au moins 8 caractères"),
+    username: Yup.string()
+      .required("Champs requis")
+      .min(2, "Doit contenir au moins 2 caractères"),
+    passwordConfirmation: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Le mot de passe ne correspond pas")
+      .required("Champs requis"),
+  });
 
   return (
-    <div className="Login">
+    <div className="Register">
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -68,12 +69,14 @@ function Login() {
               <LanguageIcon />
             </Avatar>
             <Typography component="h2" variant="h5">
-              Connexion
+              Inscription
             </Typography>
-            <Formik initialValues={initialValues} onSubmit={onSubmit}>
+            <Formik
+              initialValues={initialValues}
+              onSubmit={onSubmit}
+              validationSchema={validationSchema}
+            >
               <Form>
-                <ErrorMessage name="email" component="span"></ErrorMessage>
-
                 <Field
                   component={TextField}
                   margin="normal"
@@ -82,11 +85,22 @@ function Login() {
                   id="email"
                   label="Adresse email"
                   name="email"
+                  placeholder="ex: j.doe@gmail.com"
                   autoComplete="email"
                   autoFocus
                 />
-                <ErrorMessage name="password" component="span"></ErrorMessage>
 
+                <Field
+                  component={TextField}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="username"
+                  label="Mot de passe"
+                  type="text"
+                  id="inputusername"
+                  placeholder="ex: John Doe"
+                />
                 <Field
                   component={TextField}
                   margin="normal"
@@ -97,30 +111,35 @@ function Login() {
                   type="password"
                   id="password"
                   autoComplete="current-password"
+                  placeholder="ex: M0tdepa$$e1*"
                 />
-                <div>
-                  <input
-                    type="checkbox"
-                    name="showPassword"
-                    onChange={togglePassword}
-                  />
-                  <label htmlFor="showPassword">Montrer le mot de passe</label>
-                </div>
+                <Field
+                  component={TextField}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="passwordConfirmation"
+                  label="Mot de passe"
+                  type="password"
+                  id="inputPasswordConfirmation"
+                  autoComplete="current-password"
+                  placeholder="ex: M0tdepa$$e1*"
+                />
                 <Button
                   type="submit"
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Se connecter
+                  S'inscrire
                 </Button>
               </Form>
             </Formik>
           </Box>
           <Grid container justifyContent="center">
             <Grid item>
-              <Link href="/register" variant="body2">
-                {"Pas encore de compte ?"}
+              <Link href="/login" variant="body2">
+                {"Déjà inscrit·e ?"}
               </Link>
             </Grid>
           </Grid>
@@ -130,4 +149,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
