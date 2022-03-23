@@ -5,9 +5,10 @@ import { AuthContext } from "../contexts/auth-context";
 import toast, { Toaster } from "react-hot-toast";
 
 // Style
-import "../styles/Post.css";
 import { FaRegThumbsUp } from "react-icons/fa";
 import { RiChatDeleteFill } from "react-icons/ri";
+
+// MUI
 
 function Post() {
   let { id } = useParams();

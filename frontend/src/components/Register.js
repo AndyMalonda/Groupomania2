@@ -1,7 +1,7 @@
 // Scripts
 import React from "react";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 
@@ -96,7 +96,7 @@ function Register() {
                   required
                   fullWidth
                   name="username"
-                  label="Mot de passe"
+                  label="Nom d'utilisateur"
                   type="text"
                   id="inputusername"
                   placeholder="ex: John Doe"

@@ -7,16 +7,12 @@ import { Routes, Route } from "react-router-dom";
 // Components
 import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
-import LoggedInNav from "./components/LoggedInNav";
-import LoggedOutNav from "./components/LoggedOutNav";
+
 import Post from "./components/Post";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
-
-// Style
-import "./styles/App.css";
-// import "./bootstrap.min.css";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -41,12 +37,13 @@ function App() {
           });
         }
       });
-  }, []);
+  }, [authState]);
 
   return (
     <div className="App">
       <AuthContext.Provider value={{ authState, setAuthState }}>
-        {authState.status ? <LoggedInNav /> : <LoggedOutNav />}
+        {/* {authState.status ? <LoggedInNav /> : <LoggedOutNav />} */}
+        <Navbar></Navbar>
 
         <Routes>
           <Route path="/" element={<Home />} />

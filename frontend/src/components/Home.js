@@ -3,17 +3,35 @@ import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { flagDialog } from "./FlagDialog";
 
 // Style
-import "../styles/Home.css";
-import { FaRegThumbsUp } from "react-icons/fa";
 import { AiOutlineComment } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
+
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import ReportIcon from "@mui/icons-material/Report";
 
 // Utilities
 import { formatDate } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
+import {
+  Avatar,
+  Card,
+  CardActions,
+  CardHeader,
+  CardMedia,
+  IconButton,
+  SvgIcon,
+  Tooltip,
+  CardContent,
+  Typography,
+  Divider,
+} from "@mui/material";
+import { red } from "@mui/material/colors";
 
+// MUI
 function Home() {
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
@@ -82,62 +100,79 @@ function Home() {
       });
   };
 
+  // Alert dialog
+  const [openFlagDialog, setFlagDialogOpen] = useState(false);
+  const handleFlagClick = () => {
+    setFlagDialogOpen(true);
+  };
+  const handleFlagDialogClose = () => {
+    setFlagDialogOpen(false);
+  };
+
   return (
     <div className="Home">
       {listOfPosts.map((value, key) => {
         return (
-          <div className="card w-50 p-3" key={value.id}>
-            <div>{formatDate(value.createdAt)}</div>
-            <img
-              key={value.imageUrl}
-              src={value.imageUrl}
-              className="card-img-top"
-              alt={value.imageUrl}
+          <Card sx={{ maxWidth: 768, m: 2 }} key={value.id}>
+            <CardHeader
+              avatar={
+                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                  AM
+                </Avatar>
+              }
+              action={
+                <>
+                  <IconButton aria-label="flag" onClick={handleFlagClick}>
+                    <Tooltip title="Signaler">
+                      <ReportIcon />
+                    </Tooltip>
+                  </IconButton>
+                  {flagDialog(openFlagDialog, handleFlagDialogClose)}
+                </>
+              }
+              title={value.title}
+              subheader={formatDate(value.createdAt)}
             />
-            <div className="card-body">
-              <h5 className="card-title" key={value.title}>
-                {value.title}
-              </h5>
-              <p className="card-text" key={value.message}>
+            {value.imageUrl ? (
+              <CardMedia component="img" height="400" image={value.imageUrl} />
+            ) : (
+              <Divider />
+            )}
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
                 {value.message}
-              </p>
-              <div className="d-flex justify-content-center">
-                <div>
-                  <button
-                    // className="btn btn-outline-primary"
-                    className={
-                      likedPosts.includes(value.id)
-                        ? "btn btn-primary"
-                        : "btn btn-outline-primary"
-                    }
-                    onClick={() => {
-                      likePost(value.id);
-                    }}
-                  >
-                    <FaRegThumbsUp
-                      className={
-                        likedPosts.includes(value.id)
-                          ? "unlike-btn"
-                          : "like-btn"
-                      }
-                    />
-                  </button>
-                  <div>{value.Likes.length}</div>
-                </div>
-                <div>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={() => {
-                      navigate(`/posts/${value.id}`);
-                    }}
-                  >
-                    <AiOutlineComment />
-                  </button>
-                  <div>cnt</div>
-                </div>
-              </div>
-            </div>
-          </div>
+              </Typography>
+            </CardContent>
+            <CardActions disableSpacing>
+              <IconButton
+                aria-label="add to favorites"
+                onClick={() => {
+                  likePost(value.id);
+                }}
+              >
+                <SvgIcon
+                  sx={{ fontSize: 50, color: red[500] }}
+                  component={
+                    likedPosts.includes(value.id)
+                      ? FavoriteIcon
+                      : FavoriteBorderIcon
+                  }
+                />
+              </IconButton>
+
+              <div>{value.Likes.length}</div>
+
+              <button
+                className="btn btn-outline-primary"
+                onClick={() => {
+                  navigate(`/posts/${value.id}`);
+                }}
+              >
+                <AiOutlineComment />
+              </button>
+              <div>cnt</div>
+            </CardActions>
+          </Card>
         );
       })}
       <Toaster

@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 // possibilité d'installer Yup pour ValidationSchema
 import axios from "axios";
-import "../styles/CreatePost.css";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { AuthContext } from "../contexts/auth-context";
