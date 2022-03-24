@@ -5,10 +5,25 @@ import { AuthContext } from "../contexts/auth-context";
 import toast, { Toaster } from "react-hot-toast";
 
 // Style
-import { FaRegThumbsUp } from "react-icons/fa";
-import { RiChatDeleteFill } from "react-icons/ri";
+import SendIcon from "@mui/icons-material/Send";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 // MUI
+import {
+  Box,
+  Grid,
+  CssBaseline,
+  Paper,
+  Typography,
+  TextField,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  CardMedia,
+  IconButton,
+} from "@mui/material";
 
 function Post() {
   let { id } = useParams();
@@ -18,9 +33,9 @@ function Post() {
   let navigate = useNavigate();
   const { authState } = useContext(AuthContext);
   const notifyNewComment = () =>
-    toast("Vous avez commenté cette publication !");
+    toast.success("Vous avez commenté cette publication !");
   const notifyDeleteComment = () =>
-    toast("Vous avez supprimé votre commentaire !");
+    toast.success("Vous avez supprimé votre commentaire !");
 
   useEffect(() => {
     axios.get(`http://localhost:3006/posts/${id}`).then((response) => {
@@ -28,6 +43,7 @@ function Post() {
     });
     axios.get(`http://localhost:3006/comments/${id}`).then((response) => {
       setComments(response.data);
+      console.log(response.data);
     });
   }, []);
 
@@ -73,103 +89,88 @@ function Post() {
 
   return (
     <div className="container">
-      <div className="row">
-        <div className="col w-90 p-3">
-          <div className="card" key={postObject.id}>
-            <img
+      <Grid container spacing={2}>
+        <Grid item xs={8}>
+          <Box sx={{ boxShadow: 3 }}>
+            <CardMedia
+              component="img"
               key={postObject.imageUrl}
-              src={postObject.imageUrl}
-              className="card-img-top"
+              image={postObject.imageUrl}
               alt={postObject.imageUrl}
+              sx={{ maxHeight: 520 }}
             />
-            <div className="card-body">
-              <h5 className="card-title" key={postObject.title}>
-                {postObject.title}
-              </h5>
-              <p className="card-text" key={postObject.message}>
-                {postObject.message}
-              </p>
-            </div>
-          </div>
-        </div>
-        {/* Comment input section */}
-        <div className="col w-90 p-3">
-          <div className="row d-flex justify-content-center">
-            <div className="col-md-8">
-              {/* col-lg-6 */}
-              <div className="card shadow-0 border">
-                <div className="card-body p-4">
-                  <div className="form-outline mb-4">
-                    <input
-                      type="text"
-                      id="addComment"
-                      className="form-control"
-                      placeholder="Votre commentaire"
-                      value={newComment}
-                      onChange={(event) => {
-                        setNewComment(event.target.value);
-                      }}
-                    />
-                    <button className="btn btn-primary" onClick={addComment}>
-                      Commenter
-                    </button>
-                  </div>
-                  {/* Comments section */}
-                  <div className="listOfComments">
-                    {comments.map((comment, key) => {
-                      return (
-                        <div key={key} className="card mb-4">
-                          <div key={key} className="card-body">
-                            <p key={comment.message}>{comment.message}</p>
-                            {authState.username === comment.username && (
-                              <button
-                                className="btn-outline-danger"
-                                onClick={() => {
-                                  deleteComment(comment.id);
-                                  notifyDeleteComment();
-                                }}
-                              >
-                                <RiChatDeleteFill />
-                              </button>
-                            )}
-                            <div className="d-flex justify-content-between">
-                              <div className="d-flex flex-row align-items-center">
-                                <img
-                                  src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp"
-                                  alt="avatar"
-                                  width="25"
-                                  height="25"
-                                />
-                                <p className="small mb-0 ms-2">
-                                  {comment.username}
-                                </p>
-                              </div>
-                              <div className="d-flex flex-row align-items-center">
-                                <FaRegThumbsUp />
-                                <p className="small text-muted mb-0">Count</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Toaster
-        position="bottom-center"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-        }}
-      />
+            <ListItem>
+              <ListItemText
+                primary={postObject.title}
+                secondary={postObject.message}
+              />
+            </ListItem>
+          </Box>
+        </Grid>
+        <Grid item xs={4}>
+          <React.Fragment>
+            <CssBaseline />
+            <Paper>
+              <Typography
+                variant="h5"
+                gutterBottom
+                component="div"
+                sx={{ p: 2, pb: 0 }}
+              >
+                Commentaires
+              </Typography>
+              <List sx={{ mb: 2, maxHeight: 500, overflow: "auto" }}>
+                {comments.map((comment, key) => {
+                  return (
+                    <React.Fragment key={comment.id}>
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar
+                            alt="Profile Picture"
+                            src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp"
+                          />
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={comment.username}
+                          secondary={comment.message}
+                        />
+
+                        {authState.username === comment.username && (
+                          <IconButton
+                            size="small"
+                            onClick={() => {
+                              deleteComment(comment.id);
+                              notifyDeleteComment();
+                            }}
+                          >
+                            <HighlightOffIcon />
+                          </IconButton>
+                        )}
+                      </ListItem>
+                    </React.Fragment>
+                  );
+                })}
+                <ListItem>
+                  <TextField
+                    fullWidth
+                    id="outlined-multiline-flexible"
+                    label="Votre commentaire"
+                    multiline
+                    value={newComment}
+                    onChange={(event) => {
+                      setNewComment(event.target.value);
+                    }}
+                  />
+                  <IconButton edge="end" onClick={addComment}>
+                    <SendIcon />
+                  </IconButton>
+                </ListItem>
+              </List>
+            </Paper>
+          </React.Fragment>
+        </Grid>
+      </Grid>
+      <Toaster />
     </div>
   );
 }

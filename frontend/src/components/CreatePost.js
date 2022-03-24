@@ -13,14 +13,19 @@ function CreatePost() {
   const notify = () => toast("Votre post a été publié !");
 
   const onSubmit = (data) => {
-    if (!authState.status) {
-      navigate("/login");
-    } else {
-      axios.post("http://localhost:3006/posts", data).then((response) => {
-        notify();
-        navigate("/");
+    axios
+      .post("http://localhost:3006/posts", data, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.error) {
+          alert(response.data.error);
+          navigate("/login");
+        } else {
+          notify();
+          navigate("/");
+        }
       });
-    }
   };
 
   return (

@@ -12,11 +12,17 @@ import Post from "./components/Post";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
-import Navbar from "./components/Navbar";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 function App() {
-  const theme = createTheme({ justififyContent: "center" });
+  const themeLight = createTheme({
+    palette: {
+      background: {
+        default: "#fff",
+      },
+    },
+  });
 
   const [authState, setAuthState] = useState({
     username: "",
@@ -44,10 +50,9 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ authState, setAuthState }}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={themeLight}>
         {/* {authState.status ? <LoggedInNav /> : <LoggedOutNav />} */}
-        <Navbar></Navbar>
-
+        <CssBaseline />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

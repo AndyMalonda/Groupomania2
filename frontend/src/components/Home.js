@@ -4,18 +4,21 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { flagDialog } from "./FlagDialog";
+import LateralNav from "./LateralNav";
+import TopNav from "./TopNav";
 
 // Style
-import { AiOutlineComment } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
-
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import ReportIcon from "@mui/icons-material/Report";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ForumIcon from "@mui/icons-material/Forum";
 
 // Utilities
-import { formatDate } from "../services/utilities";
+import { formatDate, getInitials } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
+
+// MUI
 import {
   Avatar,
   Card,
@@ -29,6 +32,7 @@ import {
   Typography,
   Divider,
   Container,
+  Button,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -42,7 +46,7 @@ function Home() {
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   useEffect(() => {
-    if (!authState.status) {
+    if (!sessionStorage.getItem("token")) {
       navigate("/login");
     } else {
       axios
@@ -112,15 +116,21 @@ function Home() {
 
   return (
     <div className="Home">
+      {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
+
       {listOfPosts.map((value, key) => {
         return (
-          <Container sx={{ justifyContent: "center" }}>
+          <Container sx={{ justifyContent: "center", marginTop: 10 }}>
             <Card sx={{ maxWidth: 768, m: 2 }} key={value.id}>
               <CardHeader
                 avatar={
-                  <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                    AM
-                  </Avatar>
+                  <>
+                    <Tooltip title={value.username}>
+                      <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                        {getInitials(value.username)}
+                      </Avatar>
+                    </Tooltip>
+                  </>
                 }
                 action={
                   <>
@@ -149,8 +159,14 @@ function Home() {
                   {value.message}
                 </Typography>
               </CardContent>
-              <CardActions disableSpacing>
-                <IconButton
+              <Divider variant="middle" />
+
+              <CardActions
+                disableSpacing
+                sx={{ justifyContent: "space-evenly" }}
+              >
+                <Button
+                  sx={{ width: 1 }}
                   aria-label="add to favorites"
                   onClick={() => {
                     likePost(value.id);
@@ -164,19 +180,18 @@ function Home() {
                         : FavoriteBorderIcon
                     }
                   />
-                </IconButton>
-
-                <div>{value.Likes.length}</div>
-
-                <button
-                  className="btn btn-outline-primary"
+                  <div>{value.Likes.length}</div>
+                </Button>
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <Button
+                  sx={{ width: 1 }}
                   onClick={() => {
                     navigate(`/posts/${value.id}`);
                   }}
                 >
-                  <AiOutlineComment />
-                </button>
-                <div>cnt</div>
+                  <ForumIcon sx={{ fontSize: 50 }} />
+                  <div>{value.Likes.length}</div>
+                </Button>
               </CardActions>
             </Card>
           </Container>

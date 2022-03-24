@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -17,7 +16,8 @@ import Link from "@mui/material/Link";
 import { TextField } from "formik-mui";
 
 // Style
-import LanguageIcon from "@mui/icons-material/Language";
+import { CardMedia } from "@mui/material";
+import MainLogo from "../icon-above-font.png";
 
 function Register() {
   const initialValues = {
@@ -62,9 +62,21 @@ function Register() {
             alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LanguageIcon />
-          </Avatar>
+          <Box
+            sx={{
+              width: 150,
+              height: 150,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CardMedia
+              component="img"
+              image={MainLogo}
+              sx={{ height: 200, width: 300 }}
+            />
+          </Box>
           <Typography component="h2" variant="h5">
             Inscription
           </Typography>

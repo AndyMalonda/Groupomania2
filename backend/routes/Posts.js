@@ -28,9 +28,11 @@ router.get("/:id", async (req, res) => {
   res.json(post);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;
+  const username = req.user.username;
+  post.username = username;
   // on crée l'entrée dans l'array Posts
   await Posts.create(post);
   // on renvoie
