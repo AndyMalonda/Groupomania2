@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Formik, Form, Field } from "formik";
 // possibilité d'installer Yup pour ValidationSchema
 import axios from "axios";
@@ -11,6 +11,12 @@ function CreatePost() {
   const initialValues = { title: "", message: "", imageUrl: "" };
   let navigate = useNavigate();
   const notify = () => toast("Votre post a été publié !");
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("token")) {
+      navigate("/");
+    }
+  });
 
   const onSubmit = (data) => {
     axios

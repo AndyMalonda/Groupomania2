@@ -3,11 +3,11 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
 import toast, { Toaster } from "react-hot-toast";
+import { BackButton } from "./BackButton";
 
 // Style
 import SendIcon from "@mui/icons-material/Send";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 // MUI
@@ -182,9 +182,7 @@ function Post() {
           </React.Fragment>
         </Grid>
       </Grid>
-      <IconButton href="/" sx={{ position: "absolute", bottom: 10, right: 30 }}>
-        <ArrowBackIcon sx={{ fontSize: 50 }} />
-      </IconButton>
+      <BackButton />
       {authState.username === postObject.username && (
         <IconButton
           sx={{ position: "absolute", bottom: 10, right: 110 }}

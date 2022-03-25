@@ -7,7 +7,7 @@ import { Routes, Route } from "react-router-dom";
 // Components
 import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
-
+import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -60,6 +60,8 @@ function App() {
           <Route path="/posts" element={<Home />} />
           <Route path="/posts/:id" element={<Post />} />
           <Route path="/createpost" element={<CreatePost />} />
+          <Route path="/profile/:id" element={<Profile />} />
+
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </ThemeProvider>

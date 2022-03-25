@@ -6,13 +6,13 @@ import { AuthContext } from "../contexts/auth-context";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import { Button, Divider, SvgIcon } from "@mui/material";
+import { Button, Divider, CardMedia } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 
-import CustomIcon2 from "../CustomIcon2";
+import NavLogo from "../navlogo.png";
 
 export default function AccountMenu() {
-  const { authState, setAuthState } = React.useContext(AuthContext);
+  const { setAuthState } = React.useContext(AuthContext);
   const navigate = useNavigate("");
 
   const clearSession = () => {
@@ -36,29 +36,40 @@ export default function AccountMenu() {
           zIndex: "tooltip",
         }}
       >
-        <Button to="/" component={Link} sx={{ width: 1, height: 65 }}>
+        <Box to="/" component={Link} sx={{ width: 1, height: 1 }}>
           <Tooltip title="Accueil">
-            <SvgIcon component={CustomIcon2} inheritViewBox />
+            <CardMedia
+              component="img"
+              image={NavLogo}
+              sx={{ width: 1, height: 65 }}
+            />
           </Tooltip>
-        </Button>
+        </Box>
         <Divider orientation="vertical" variant="middle" flexItem />
-        <Button to="/" component={Link} sx={{ width: 1, height: 65 }}>
-          <Tooltip title="Votre compte">
+        <Tooltip title="Votre compte">
+          <Button to="/" component={Link} sx={{ width: 1, height: 65 }}>
             <AccountCircleIcon sx={{ fontSize: 50 }} />
-          </Tooltip>
-        </Button>
+          </Button>
+        </Tooltip>
+
         <Divider orientation="vertical" variant="middle" flexItem />
-        <Button to="/createpost" component={Link} sx={{ width: 1, height: 65 }}>
-          <Tooltip title="Nouvelle publication">
+        <Tooltip title="Nouvelle publication">
+          <Button
+            to="/createpost"
+            component={Link}
+            sx={{ width: 1, height: 65 }}
+          >
             <PostAddIcon sx={{ fontSize: 50 }} />
-          </Tooltip>
-        </Button>
+          </Button>
+        </Tooltip>
+
         <Divider orientation="vertical" variant="middle" flexItem />
-        <Button onClick={clearSession} sx={{ width: 1, height: 65 }}>
-          <Tooltip title="Se déconnecter">
+        <Tooltip title="Se déconnecter">
+          <Button onClick={clearSession} sx={{ width: 1, height: 65 }}>
             <LogoutIcon sx={{ fontSize: 50 }} />
-          </Tooltip>
-        </Button>
+          </Button>
+        </Tooltip>
+
         <Divider />
       </Box>
     </React.Fragment>

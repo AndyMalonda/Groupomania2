@@ -2,7 +2,7 @@
 import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { flagDialog } from "./FlagDialog";
 import LateralNav from "./LateralNav";
 import TopNav from "./TopNav";
@@ -122,14 +122,16 @@ function Home() {
       {listOfPosts.map((value, key) => {
         return (
           <Container sx={{ justifyContent: "center", marginTop: 10 }}>
-            <Card sx={{ maxWidth: 768, m: 2 }} key={value.id}>
+            <Card sx={{ maxWidth: 768, m: 2 }} key={key}>
               <CardHeader
                 avatar={
                   <>
                     <Tooltip title={value.username}>
-                      <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        {getInitials(value.username)}
-                      </Avatar>
+                      <Link to={`/profile/${value.UserId}`}>
+                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                          {getInitials(value.username)}
+                        </Avatar>
+                      </Link>
                     </Tooltip>
                   </>
                 }

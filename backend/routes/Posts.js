@@ -28,11 +28,25 @@ router.get("/:id", async (req, res) => {
   res.json(post);
 });
 
+router.get("/byuserId/:id", async (req, res) => {
+  // on récupère la data dans les params de la req
+  const id = req.params.id;
+  // on cherche la primary key correspondante dans l'array Posts
+  const listOfPosts = await Posts.findAll({
+    where: { UserId: id },
+    include: [Likes],
+  });
+  // on renvoie
+  res.json(listOfPosts);
+});
+
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;
   const username = req.user.username;
+  const userId = req.user.id;
   post.username = username;
+  post.UserId = userId;
   // on crée l'entrée dans l'array Posts
   await Posts.create(post);
   // on renvoie
@@ -43,7 +57,7 @@ router.delete("/:postId", validateToken, async (req, res) => {
   // on récupère la data
   const postId = req.params.postId;
   // on supprime la ligne du post correspondant à l'id récupérée
-  await Posts.destroy({ where: { id: postId } });
+  await Posts.destroy({ where: { id: postId }, include: [Likes] });
   // on renvoie une simple string en res
   res.json("Publication supprimée");
 });
