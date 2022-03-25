@@ -7,6 +7,8 @@ import toast, { Toaster } from "react-hot-toast";
 // Style
 import SendIcon from "@mui/icons-material/Send";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // MUI
 import {
@@ -34,8 +36,8 @@ function Post() {
   const { authState } = useContext(AuthContext);
   const notifyNewComment = () =>
     toast.success("Vous avez commenté cette publication !");
-  const notifyDeleteComment = () =>
-    toast.success("Vous avez supprimé votre commentaire !");
+  const notifyDeleteComment = () => toast.success("Commentaire supprimé !");
+  const notifyDeletePost = () => toast.success("Publication supprimée !");
 
   useEffect(() => {
     axios.get(`http://localhost:3006/posts/${id}`).then((response) => {
@@ -87,6 +89,16 @@ function Post() {
       });
   };
 
+  const deletePost = (id) => {
+    axios
+      .delete(`http://localhost:3006/posts/${id}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then(() => {
+        navigate("/");
+      });
+  };
+
   return (
     <div className="container">
       <Grid container spacing={2}>
@@ -119,7 +131,7 @@ function Post() {
               >
                 Commentaires
               </Typography>
-              <List sx={{ mb: 2, maxHeight: 500, overflow: "auto" }}>
+              <List sx={{ mb: 2, maxHeight: 480, overflow: "auto" }}>
                 {comments.map((comment, key) => {
                   return (
                     <React.Fragment key={comment.id}>
@@ -170,6 +182,20 @@ function Post() {
           </React.Fragment>
         </Grid>
       </Grid>
+      <IconButton href="/" sx={{ position: "absolute", bottom: 10, right: 30 }}>
+        <ArrowBackIcon sx={{ fontSize: 50 }} />
+      </IconButton>
+      {authState.username === postObject.username && (
+        <IconButton
+          sx={{ position: "absolute", bottom: 10, right: 110 }}
+          onClick={() => {
+            deletePost(postObject.id);
+            notifyDeletePost();
+          }}
+        >
+          <DeleteIcon sx={{ fontSize: 50 }} />
+        </IconButton>
+      )}
       <Toaster />
     </div>
   );

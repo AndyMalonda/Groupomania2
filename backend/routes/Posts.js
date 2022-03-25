@@ -39,6 +39,15 @@ router.post("/", validateToken, async (req, res) => {
   res.json(post);
 });
 
+router.delete("/:postId", validateToken, async (req, res) => {
+  // on récupère la data
+  const postId = req.params.postId;
+  // on supprime la ligne du post correspondant à l'id récupérée
+  await Posts.destroy({ where: { id: postId } });
+  // on renvoie une simple string en res
+  res.json("Publication supprimée");
+});
+
 // router.post("/register", userCtrl.register);
 // router.post("/login", userCtrl.login);
 

@@ -33,6 +33,7 @@ import {
   Divider,
   Container,
   Button,
+  Box,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -145,20 +146,31 @@ function Home() {
                 title={value.title}
                 subheader={formatDate(value.createdAt)}
               />
-              {value.imageUrl ? (
-                <CardMedia
-                  component="img"
-                  height="400"
-                  image={value.imageUrl}
-                />
-              ) : (
-                <Divider />
-              )}
-              <CardContent>
-                <Typography variant="body2" color="text.secondary">
-                  {value.message}
-                </Typography>
-              </CardContent>
+              <Box
+                sx={{
+                  "&:hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={() => {
+                  navigate(`/posts/${value.id}`);
+                }}
+              >
+                {value.imageUrl ? (
+                  <CardMedia
+                    component="img"
+                    height="400"
+                    image={value.imageUrl}
+                  />
+                ) : (
+                  <Divider />
+                )}
+                <CardContent>
+                  <Typography variant="body2" color="text.secondary">
+                    {value.message}
+                  </Typography>
+                </CardContent>
+              </Box>
               <Divider variant="middle" />
 
               <CardActions
