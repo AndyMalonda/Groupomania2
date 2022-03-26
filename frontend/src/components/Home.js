@@ -34,6 +34,7 @@ import {
   Container,
   Button,
   Box,
+  Chip,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -118,7 +119,6 @@ function Home() {
   return (
     <div className="Home">
       {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
-
       {listOfPosts.map((value, key) => {
         return (
           <Container sx={{ justifyContent: "center", marginTop: 10 }}>

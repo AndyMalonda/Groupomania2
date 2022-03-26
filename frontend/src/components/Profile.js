@@ -1,35 +1,38 @@
 import {
   Avatar,
   Box,
+  Button,
   Card,
-  CardContent,
   CardHeader,
   CardMedia,
   Divider,
   Grid,
+  List,
   ListItem,
   ListItemText,
-  Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import { formatDate } from "../services/utilities";
 import { BackButton } from "./BackButton";
+import { AuthContext } from "../contexts/auth-context";
 
 export default function Profile() {
   const { id } = useParams();
   const [username, setUsername] = useState("");
-  //   const [createdAt, setCreatedAt] = useState("");
   const navigate = useNavigate();
   const [listOfPosts, setListOfPosts] = useState([]);
+  const { authState } = useContext(AuthContext);
+
   useEffect(() => {
     axios.get(`http://localhost:3006/users/profile/${id}`).then((res) => {
       setUsername(res.data.username);
-      //   setCreatedAt(res.data.createdAt);
     });
     axios.get(`http://localhost:3006/posts/byuserId/${id}`).then((res) => {
       setListOfPosts(res.data);
+      console.log(id);
+      console.log(authState.id);
+      console.log(authState);
     });
   }, []);
 
@@ -46,12 +49,7 @@ export default function Profile() {
                   alignItems: "center",
                 }}
               >
-                <CardHeader
-                  title={username}
-                  component="div"
-
-                  //   subheader={formatDate(createdAt)}
-                ></CardHeader>
+                <CardHeader title={username} component="div"></CardHeader>
                 <CardMedia component="div">
                   <Avatar
                     alt="Avatar"
@@ -62,29 +60,16 @@ export default function Profile() {
                     }}
                   />
                 </CardMedia>
-                <CardContent component="div">
-                  <ListItem
-                    sx={{
-                      "&:hover": {
-                        cursor: "pointer",
-                        backgroundColor: "#f5f5f5",
-                      },
-                    }}
-                  >
-                    Changer le mot de passe
-                  </ListItem>
-                  <ListItem
-                    sx={{
-                      color: "red",
-                      "&:hover": {
-                        cursor: "pointer",
-                        backgroundColor: "#f5f5f5",
-                      },
-                    }}
-                  >
-                    Supprimer le compte
-                  </ListItem>
-                </CardContent>
+                {authState.username === username && (
+                  <List>
+                    <ListItem>
+                      <Button>Changer le mot de passe</Button>
+                    </ListItem>
+                    <ListItem>
+                      <Button sx={{ color: "red" }}>Supprimer le compte</Button>
+                    </ListItem>
+                  </List>
+                )}
               </Card>
             </Box>
           </Grid>
