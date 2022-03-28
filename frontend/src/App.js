@@ -7,22 +7,29 @@ import { Routes, Route } from "react-router-dom";
 // Components
 import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
-import LoggedInNav from "./components/LoggedInNav";
-import LoggedOutNav from "./components/LoggedOutNav";
+import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Login from "./components/Login";
-import Registration from "./components/Registration";
+import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
-
-// Style
-import "./styles/App.css";
-import "./bootstrap.min.css";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
+  const themeLight = createTheme({
+    palette: {
+      background: {
+        default: "#fff",
+      },
+    },
+  });
+
   const [authState, setAuthState] = useState({
     username: "",
     id: 0,
     status: false,
+    isAdmin: false,
   });
 
   useEffect(() => {
@@ -37,28 +44,30 @@ function App() {
           setAuthState({
             username: response.data.username,
             id: response.data.id,
+            isAdmin: response.data.isAdmin,
             status: true,
           });
         }
       });
-  }, []);
+  }, [authState]);
 
   return (
-    <div className="App">
-      <AuthContext.Provider value={{ authState, setAuthState }}>
-        {authState.status ? <LoggedInNav /> : <LoggedOutNav />}
-
+    <AuthContext.Provider value={{ authState, setAuthState }}>
+      <ThemeProvider theme={themeLight}>
+        <CssBaseline />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/posts" element={<Home />} />
           <Route path="/posts/:id" element={<Post />} />
           <Route path="/createpost" element={<CreatePost />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
-      </AuthContext.Provider>
-    </div>
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 

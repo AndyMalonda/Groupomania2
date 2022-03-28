@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-// possibilité d'installer Yup pour ValidationSchema
+import React, { useContext, useEffect } from "react";
+import { Formik, Form, Field } from "formik";
 import axios from "axios";
-import "../styles/CreatePost.css";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { AuthContext } from "../contexts/auth-context";
+import { Container, Box, Typography, Button } from "@mui/material";
+import { TextField } from "formik-mui";
+import { BackButton } from "../components/BackButton";
 
 function CreatePost() {
   const { authState } = useContext(AuthContext);
@@ -13,53 +14,83 @@ function CreatePost() {
   let navigate = useNavigate();
   const notify = () => toast("Votre post a été publié !");
 
-  const onSubmit = (data) => {
-    if (!authState.status) {
-      navigate("/login");
-    } else {
-      axios.post("http://localhost:3006/posts", data).then((response) => {
-        notify();
-        navigate("/");
-      });
+  useEffect(() => {
+    if (!sessionStorage.getItem("token")) {
+      navigate("/");
     }
+  });
+
+  const onSubmit = (data) => {
+    axios
+      .post("http://localhost:3006/posts", data, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        if (response.data.error) {
+          alert(response.data.error);
+          navigate("/login");
+        } else {
+          notify();
+          navigate("/");
+        }
+      });
   };
 
   return (
     <div className="CreatePost">
-      <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        <Form>
-          <div className="container">
-            <div className="row">
-              <div className="col w-90 p-3">
-                <div className="card">
-                  <h5 className="card-title">Image (facultatif)</h5>
-
-                  <Field
-                    id="inputCreatePost"
-                    name="imageUrl"
-                    placeholder="ex: http://chatsmagazine/photos/photodechat1.jpg"
-                  />
-                  <h5 className="card-title">Titre </h5>
-                  <Field
-                    id="inputCreatePost"
-                    name="title"
-                    placeholder="ex: Mon petit chat"
-                  />
-                  <h5 className="card-title">Message </h5>
-                  <Field
-                    id="inputCreatePost"
-                    name="message"
-                    placeholder="ex: Voici mon petit chat..."
-                  />
-                  <button className="btn btn-primary" type="submit">
-                    Créer un post
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Form>
-      </Formik>
+      <Container component="main" maxWidth="xs">
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography component="h2" variant="h5">
+            Nouvelle publication
+          </Typography>
+          <Formik initialValues={initialValues} onSubmit={onSubmit}>
+            <Form>
+              <Field
+                component={TextField}
+                margin="normal"
+                fullWidth
+                name="imageUrl"
+                label="Image (facultatif)"
+                placeholder="ex: http://chatsmagazine/photos/photodechat1.jpg"
+              />
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                name="title"
+                label="Titre"
+                placeholder="ex: Mon petit chat"
+              />
+              <Field
+                component={TextField}
+                margin="normal"
+                required
+                fullWidth
+                multiline
+                name="message"
+                label="Message"
+                placeholder="ex: Voici mon petit chat..."
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Publier
+              </Button>
+            </Form>
+          </Formik>
+        </Box>
+      </Container>
       <Toaster
         position="bottom-center"
         toastOptions={{
@@ -70,6 +101,7 @@ function CreatePost() {
           },
         }}
       />
+      <BackButton />
     </div>
   );
 }

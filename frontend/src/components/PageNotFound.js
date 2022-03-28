@@ -6,6 +6,7 @@ export default function PageNotFound() {
       <p> </p>
       <h1>¯\_(ツ)_/¯</h1>
       <p> </p>
+      <a href="/"> Retour à l'accueil </a>
     </div>
   );
 }

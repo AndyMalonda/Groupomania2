@@ -1,10 +1,26 @@
+// Scripts
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
-import { MdRemoveRedEye } from "react-icons/md";
+
+// MUI
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import { TextField } from "formik-mui";
+
+// Style
+import MainLogo from "../icon-above-font.png";
+import CardMedia from "@mui/material/CardMedia";
+
+const theme = createTheme();
 
 function Login() {
   const initialValues = { email: "", password: "" };
@@ -14,6 +30,7 @@ function Login() {
   let navigate = useNavigate();
 
   const onSubmit = (data) => {
+    console.log(data);
     axios.post("http://localhost:3006/users/login", data).then((response) => {
       if (response.data.error) {
         alert(response.data.error);
@@ -37,47 +54,87 @@ function Login() {
 
   return (
     <div className="Login">
-      <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        <Form>
-          <div className="form-group">
-            <label>Adresse email</label>
-            <ErrorMessage name="email" component="span"></ErrorMessage>
-
-            <Field
-              className="form-control"
-              id="inputEmail"
-              name="email"
-              placeholder="ex: j.doe@groupomania.fr"
-            />
-          </div>
-          <div className="form-group">
-            <label>Mot de passe</label>
-            <ErrorMessage name="password" component="span"></ErrorMessage>
-
-            <Field
-              className="form-control"
-              id="inputPassword"
-              name="password"
-              type={passwordShown ? "text" : "password"}
-              placeholder="ex: MotDePasse123*"
-            />
-            <div>
-              <input
-                type="checkbox"
-                name="showPassword"
-                onChange={togglePassword}
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              sx={{
+                width: 150,
+                height: 150,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={MainLogo}
+                sx={{ height: 200, width: 300 }}
               />
-              <label htmlFor="showPassword">Montrer le mot de passe</label>
-            </div>
-          </div>
-          <button className="btn btn-primary" type="submit">
-            Se connecter
-          </button>
-        </Form>
-      </Formik>
-      <p>
-        Pas encore de compte ? <a href="/registration">S'inscrire</a>
-      </p>
+            </Box>
+            <Typography component="h2" variant="h5">
+              Connexion
+            </Typography>
+            <Formik initialValues={initialValues} onSubmit={onSubmit}>
+              <Form>
+                <ErrorMessage name="email" component="span"></ErrorMessage>
+
+                <Field
+                  component={TextField}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Adresse email"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                />
+                <ErrorMessage name="password" component="span"></ErrorMessage>
+
+                <Field
+                  component={TextField}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Mot de passe"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+                <div>
+                  <input
+                    type="checkbox"
+                    name="showPassword"
+                    onChange={togglePassword}
+                  />
+                  <label htmlFor="showPassword">Montrer le mot de passe</label>
+                </div>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Se connecter
+                </Button>
+              </Form>
+            </Formik>
+          </Box>
+          <Grid container justifyContent="center">
+            <Link href="/register">Pas encore de compte ?</Link>
+          </Grid>
+        </Container>
+      </ThemeProvider>
     </div>
   );
 }
