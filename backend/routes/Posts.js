@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Posts, Likes, Comments } = require("../models");
 const { validateToken } = require("../middlewares/auth");
+const { validateAdmin } = require("../middlewares/admin");
 
 // const postCtrl = require("../controllers/post");
 
@@ -62,7 +63,28 @@ router.delete("/:postId", validateToken, async (req, res) => {
   res.json("Publication supprimée");
 });
 
-// router.post("/register", userCtrl.register);
-// router.post("/login", userCtrl.login);
+// get all Posts where is flagged = true  (admin only)  //
+router.get("/read/flagged", validateAdmin, async (req, res) => {
+  const listOfPosts = await Posts.findAll({ where: { isFlagged: true } });
+  res.json(listOfPosts);
+});
+
+// flag a post
+router.put("/flag/:postId", validateToken, async (req, res) => {
+  const postId = req.params.postId;
+  const post = await Posts.findByPk(postId);
+  post.isFlagged = true;
+  await post.save();
+  res.json("Publication signalée");
+});
+
+// unflag a post
+router.put("/unflag/:postId", validateToken, async (req, res) => {
+  const postId = req.params.postId;
+  const post = await Posts.findByPk(postId);
+  post.isFlagged = false;
+  await post.save();
+  res.json("Publication désignalée");
+});
 
 module.exports = router;

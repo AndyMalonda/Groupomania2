@@ -3,9 +3,15 @@ import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { flagDialog } from "./FlagDialog";
 import LateralNav from "./LateralNav";
 import TopNav from "./TopNav";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 
 // Style
 import toast, { Toaster } from "react-hot-toast";
@@ -15,7 +21,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ForumIcon from "@mui/icons-material/Forum";
 
 // Utilities
-import { formatDate, getInitials } from "../services/utilities";
+import { formatDate, getInitialsFromName } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
 
 // MUI
@@ -107,13 +113,28 @@ function Home() {
       });
   };
 
-  // Alert dialog
-  const [openFlagDialog, setFlagDialogOpen] = useState(false);
-  const handleFlagClick = () => {
-    setFlagDialogOpen(true);
+  const reportPost = (postId) => {
+    axios
+      .put(
+        `http://localhost:3006/posts/flag/${postId}`,
+        { PostId: postId },
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
+      .then((response) => {
+        console.log(response.data);
+        toast("Publication signalée !");
+      });
   };
-  const handleFlagDialogClose = () => {
-    setFlagDialogOpen(false);
+
+  // Alert dialog
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -129,7 +150,7 @@ function Home() {
                     <Tooltip title={value.username}>
                       <Link to={`/profile/${value.UserId}`}>
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                          {getInitials(value.username)}
+                          {getInitialsFromName(value.username)}
                         </Avatar>
                       </Link>
                     </Tooltip>
@@ -137,12 +158,51 @@ function Home() {
                 }
                 action={
                   <>
-                    <IconButton aria-label="flag" onClick={handleFlagClick}>
-                      <Tooltip title="Signaler">
-                        <ReportIcon />
-                      </Tooltip>
-                    </IconButton>
-                    {flagDialog(openFlagDialog, handleFlagDialogClose)}
+                    {!value.isFlagged ? (
+                      <>
+                        <IconButton aria-label="flag" onClick={handleClickOpen}>
+                          <Tooltip title="Signaler">
+                            <ReportIcon />
+                          </Tooltip>
+                        </IconButton>
+                        <Dialog
+                          open={open}
+                          onClose={handleClose}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            {"Signaler cette publication ?"}
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              Êtes-vous sûr·e de vouloir signaler cette
+                              publication ? Si oui la modération examinera si
+                              cette publication enfreint les standards de notre
+                              groupe.
+                            </DialogContentText>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose}>Annuler</Button>
+                            <Button
+                              onClick={() => {
+                                reportPost(value.id);
+                                handleClose();
+                              }}
+                              autoFocus
+                            >
+                              Confirmer
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </>
+                    ) : (
+                      <>
+                        <Tooltip title="Publication déjà signalée">
+                          <ReportIcon sx={{ color: "#d3d3d3" }} />
+                        </Tooltip>
+                      </>
+                    )}
                   </>
                 }
                 title={value.title}

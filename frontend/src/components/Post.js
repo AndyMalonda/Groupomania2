@@ -183,7 +183,8 @@ function Post() {
         </Grid>
       </Grid>
       <BackButton />
-      {authState.username === postObject.username && (
+      {(authState.username === postObject.username ||
+        authState.isAdmin === true) && (
         <IconButton
           sx={{ position: "absolute", bottom: 10, right: 110 }}
           onClick={() => {

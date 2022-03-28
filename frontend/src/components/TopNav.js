@@ -6,14 +6,24 @@ import { AuthContext } from "../contexts/auth-context";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { Button, Divider, CardMedia } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useContext } from "react";
 import NavLogo from "../navlogo.png";
 
 export default function AccountMenu() {
-  const { setAuthState } = React.useContext(AuthContext);
+  const { setAuthState } = useContext(AuthContext);
   const navigate = useNavigate("");
+  const id = useContext(AuthContext).authState.id;
+  const isAdmin = useContext(AuthContext).authState.isAdmin;
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const clearSession = () => {
     sessionStorage.removeItem("token");
@@ -34,9 +44,15 @@ export default function AccountMenu() {
           top: 0,
           width: 1,
           zIndex: "tooltip",
+          boxShadow: 1,
         }}
       >
-        <Box to="/" component={Link} sx={{ width: 1, height: 1 }}>
+        <Box
+          to="/"
+          onClick={scrollToTop}
+          component={Link}
+          sx={{ width: 1, height: 1 }}
+        >
           <Tooltip title="Accueil">
             <CardMedia
               component="img"
@@ -47,7 +63,11 @@ export default function AccountMenu() {
         </Box>
         <Divider orientation="vertical" variant="middle" flexItem />
         <Tooltip title="Votre compte">
-          <Button to="/" component={Link} sx={{ width: 1, height: 65 }}>
+          <Button
+            component={Link}
+            to={`/profile/${id}`}
+            sx={{ width: 1, height: 65 }}
+          >
             <AccountCircleIcon sx={{ fontSize: 50 }} />
           </Button>
         </Tooltip>
@@ -62,6 +82,21 @@ export default function AccountMenu() {
             <PostAddIcon sx={{ fontSize: 50 }} />
           </Button>
         </Tooltip>
+
+        {isAdmin && (
+          <>
+            <Divider orientation="vertical" variant="middle" flexItem />
+            <Tooltip title="Dashboard admin">
+              <Button
+                to="/admindashboard"
+                component={Link}
+                sx={{ width: 1, height: 65 }}
+              >
+                <AdminPanelSettingsIcon sx={{ fontSize: 50 }} />
+              </Button>
+            </Tooltip>
+          </>
+        )}
 
         <Divider orientation="vertical" variant="middle" flexItem />
         <Tooltip title="Se déconnecter">

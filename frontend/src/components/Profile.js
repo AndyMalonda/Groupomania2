@@ -30,9 +30,6 @@ export default function Profile() {
     });
     axios.get(`http://localhost:3006/posts/byuserId/${id}`).then((res) => {
       setListOfPosts(res.data);
-      console.log(id);
-      console.log(authState.id);
-      console.log(authState);
     });
   }, []);
 

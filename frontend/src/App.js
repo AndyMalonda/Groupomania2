@@ -14,6 +14,7 @@ import Register from "./components/Register";
 import PageNotFound from "./components/PageNotFound";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   const themeLight = createTheme({
@@ -28,6 +29,7 @@ function App() {
     username: "",
     id: 0,
     status: false,
+    isAdmin: false,
   });
 
   useEffect(() => {
@@ -42,6 +44,7 @@ function App() {
           setAuthState({
             username: response.data.username,
             id: response.data.id,
+            isAdmin: response.data.isAdmin,
             status: true,
           });
         }
@@ -51,7 +54,6 @@ function App() {
   return (
     <AuthContext.Provider value={{ authState, setAuthState }}>
       <ThemeProvider theme={themeLight}>
-        {/* {authState.status ? <LoggedInNav /> : <LoggedOutNav />} */}
         <CssBaseline />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -61,7 +63,7 @@ function App() {
           <Route path="/posts/:id" element={<Post />} />
           <Route path="/createpost" element={<CreatePost />} />
           <Route path="/profile/:id" element={<Profile />} />
-
+          <Route path="/admindashboard" element={<AdminDashboard />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </ThemeProvider>
