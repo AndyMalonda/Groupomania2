@@ -5,9 +5,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LateralNav from "./LateralNav";
 import TopNav from "./TopNav";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
 
 // Style
 import toast, { Toaster } from "react-hot-toast";
@@ -16,6 +13,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ForumIcon from "@mui/icons-material/Forum";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
 // Utilities
 import { formatDate, getInitialsFromName } from "../services/utilities";
@@ -41,6 +39,10 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -49,10 +51,15 @@ function Home() {
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
+  const currentUsername = authState.username;
+
   const navigate = useNavigate();
   const notifyLike = () => toast("Vous aimez cette publication !");
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
+  const notifyNewComment = () =>
+    toast("Vous avez commenté cette publication !");
 
+  // redirect to login page if not logged in
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
       navigate("/login");
@@ -132,17 +139,13 @@ function Home() {
       });
   };
 
-  const log = (data) => {
-    console.log(data);
-  };
-
   return (
     <div className="Home">
       {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
       {listOfPosts.map((value, key) => {
         return (
           <Container sx={{ justifyContent: "center", marginTop: 10 }}>
-            <Card sx={{ maxWidth: 768, m: 2 }}>
+            <Card key={key} sx={{ maxWidth: 768, m: 2 }}>
               <CardHeader
                 avatar={
                   <>
@@ -233,20 +236,21 @@ function Home() {
                     navigate(`/posts/${value.id}`);
                   }}
                 >
-                  <ForumIcon sx={{ fontSize: 50 }} />
-                  <div>{value.Comments.length}</div>
+                  <ZoomOutMapIcon sx={{ fontSize: 50 }} />
                 </Button>
               </CardActions>
-              <Accordion>
+              <Accordion TransitionProps={{ unmountOnExit: true }}>
                 <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
+                  expandIcon={<ForumIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
-                  <Typography>Commentaires</Typography>
+                  <Typography align="center">
+                    {value.Comments.length} commentaires
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <List>
+                  <List sx={{ mb: 2, maxHeight: 380, overflow: "auto" }}>
                     {value.Comments.map((comment) => {
                       return (
                         <ListItem>
@@ -283,6 +287,16 @@ function Home() {
                         </ListItem>
                       );
                     })}
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                          {getInitialsFromName(currentUsername)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <Button onClick={() => navigate(`/posts/${value.id}`)}>
+                        Participer à la conversation !
+                      </Button>
+                    </ListItem>
                   </List>
                 </AccordionDetails>
               </Accordion>

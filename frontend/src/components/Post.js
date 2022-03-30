@@ -32,8 +32,8 @@ function Post() {
   const [postObject, setPostObject] = useState({});
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  let navigate = useNavigate();
   const { authState } = useContext(AuthContext);
+  let navigate = useNavigate();
   const notifyNewComment = () =>
     toast.success("Vous avez commenté cette publication !");
   const notifyDeleteComment = () => toast.success("Commentaire supprimé !");
@@ -62,7 +62,6 @@ function Post() {
       .then((response) => {
         if (response.data.error) {
           alert(response.data.error);
-          navigate("/login");
         } else {
           const commentToAdd = {
             message: newComment,

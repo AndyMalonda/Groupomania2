@@ -24,6 +24,19 @@ router.post("/", validateToken, async (req, res) => {
   res.json(comment);
 });
 
+// router.post("/", validateToken, async (req, res) => {
+//   try {
+//     const comment = await Comments.create({
+//       message: req.body.message,
+//       PostId: req.body.PostId,
+//       UserId: req.body.UserId,
+//     });
+//     res.send(comment);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// });
+
 router.delete("/:commentId", validateToken, async (req, res) => {
   // on récupère la data
   const commentId = req.params.commentId;
