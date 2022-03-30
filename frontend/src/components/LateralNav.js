@@ -26,6 +26,7 @@ export default function LateralNav() {
         position: "fixed",
         bottom: 16,
         right: 16,
+        zIndex: "tooltip",
       }}
     >
       <SpeedDial ariaLabel="SpeedDial" icon={<SpeedDialIcon />}>

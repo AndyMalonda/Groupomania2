@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -32,20 +32,6 @@ export default function ChangePassword() {
     newPassword: "",
     confirmPassword: "",
   };
-
-  // const onSubmit = (data) => {
-  //   axios
-  //     .put("http://localhost:3006/users/password", data, {
-  //       headers: { token: sessionStorage.getItem("token") },
-  //     })
-  //     .then((response) => {
-  //       if (response.data.error) {
-  //         toast.error(response.data.error);
-  //       }
-  //       toast.success("Mot de passe modifié avec succès.");
-  //       navigate("/");
-  //     });
-  // };
 
   async function onSubmit(data) {
     try {

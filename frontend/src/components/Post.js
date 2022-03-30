@@ -47,7 +47,7 @@ function Post() {
       setComments(response.data);
       console.log(response.data);
     });
-  }, []);
+  }, [id]);
 
   const addComment = () => {
     axios
@@ -100,7 +100,7 @@ function Post() {
 
   return (
     <div className="container">
-      <Grid container spacing={2}>
+      <Grid container spacing={{ xs: 2, md: 3 }}>
         <Grid item xs={8}>
           <Box sx={{ boxShadow: 3 }}>
             <CardMedia

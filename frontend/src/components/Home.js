@@ -11,7 +11,6 @@ import toast, { Toaster } from "react-hot-toast";
 import ReportIcon from "@mui/icons-material/Report";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ForumIcon from "@mui/icons-material/Forum";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
@@ -39,7 +38,6 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  TextField,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -56,8 +54,6 @@ function Home() {
   const navigate = useNavigate();
   const notifyLike = () => toast("Vous aimez cette publication !");
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
-  const notifyNewComment = () =>
-    toast("Vous avez commenté cette publication !");
 
   // redirect to login page if not logged in
   useEffect(() => {
@@ -78,7 +74,7 @@ function Home() {
           );
         });
     }
-  }, []);
+  }, [navigate]);
 
   const likePost = (postId) => {
     axios
@@ -144,8 +140,11 @@ function Home() {
       {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
       {listOfPosts.map((value, key) => {
         return (
-          <Container sx={{ justifyContent: "center", marginTop: 10 }}>
-            <Card key={key} sx={{ maxWidth: 768, m: 2 }}>
+          <Container
+            key={value.id}
+            sx={{ justifyContent: "center", marginTop: 10 }}
+          >
+            <Card sx={{ maxWidth: 768, m: 2 }}>
               <CardHeader
                 avatar={
                   <>
@@ -241,7 +240,7 @@ function Home() {
               </CardActions>
               <Accordion TransitionProps={{ unmountOnExit: true }}>
                 <AccordionSummary
-                  expandIcon={<ForumIcon />}
+                  expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
@@ -253,7 +252,7 @@ function Home() {
                   <List sx={{ mb: 2, maxHeight: 380, overflow: "auto" }}>
                     {value.Comments.map((comment) => {
                       return (
-                        <ListItem>
+                        <ListItem key={comment.id}>
                           <ListItemAvatar>
                             <Avatar
                               sx={{ bgcolor: red[500] }}
