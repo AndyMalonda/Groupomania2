@@ -4,6 +4,7 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
+import toast, { Toaster } from "react-hot-toast";
 
 // MUI
 import CssBaseline from "@mui/material/CssBaseline";
@@ -29,23 +30,28 @@ function Login() {
 
   let navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    console.log(data);
-    axios.post("http://localhost:3006/users/login", data).then((response) => {
+  async function onSubmit(data) {
+    try {
+      const response = await axios.post(
+        "http://localhost:3006/users/login",
+        data
+      );
       if (response.data.error) {
-        alert(response.data.error);
+        toast.error(response.data.error);
       } else {
-        console.log("connecté");
         sessionStorage.setItem("token", response.data.token);
         setAuthState({
           username: response.data.username,
           id: response.data.id,
           status: true,
         });
+        toast.success(response.data);
         navigate("/");
       }
-    });
-  };
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  }
 
   const togglePassword = (e) => {
     // e.preventDefault();
@@ -134,6 +140,7 @@ function Login() {
             <Link href="/register">Pas encore de compte ?</Link>
           </Grid>
         </Container>
+        <Toaster />
       </ThemeProvider>
     </div>
   );

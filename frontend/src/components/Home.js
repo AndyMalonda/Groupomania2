@@ -5,13 +5,9 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LateralNav from "./LateralNav";
 import TopNav from "./TopNav";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-} from "@mui/material";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
 
 // Style
 import toast, { Toaster } from "react-hot-toast";
@@ -19,6 +15,7 @@ import ReportIcon from "@mui/icons-material/Report";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ForumIcon from "@mui/icons-material/Forum";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 // Utilities
 import { formatDate, getInitialsFromName } from "../services/utilities";
@@ -40,7 +37,10 @@ import {
   Container,
   Button,
   Box,
-  Chip,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
 
@@ -89,7 +89,6 @@ function Home() {
                 notifyLike();
                 post.Likes.push(0);
                 return post;
-                // return { ...post, Likes: [...post.Likes, 0] };
               } else {
                 const likesArray = post.Likes;
                 likesArray.pop();
@@ -117,24 +116,24 @@ function Home() {
     axios
       .put(
         `http://localhost:3006/posts/flag/${postId}`,
-        { PostId: postId },
+        { postId: postId },
         { headers: { token: sessionStorage.getItem("token") } }
       )
       .then((response) => {
         console.log(response.data);
         toast("Publication signalée !");
+        axios
+          .get("http://localhost:3006/posts", {
+            headers: { token: sessionStorage.getItem("token") },
+          })
+          .then((response) => {
+            setListOfPosts(response.data.listOfPosts);
+          });
       });
   };
 
-  // Alert dialog
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
+  const log = (data) => {
+    console.log(data);
   };
 
   return (
@@ -143,7 +142,7 @@ function Home() {
       {listOfPosts.map((value, key) => {
         return (
           <Container sx={{ justifyContent: "center", marginTop: 10 }}>
-            <Card sx={{ maxWidth: 768, m: 2 }} key={key}>
+            <Card sx={{ maxWidth: 768, m: 2 }}>
               <CardHeader
                 avatar={
                   <>
@@ -160,48 +159,19 @@ function Home() {
                   <>
                     {!value.isFlagged ? (
                       <>
-                        <IconButton aria-label="flag" onClick={handleClickOpen}>
+                        <IconButton
+                          aria-label="flag"
+                          onClick={() => {
+                            reportPost(value.id);
+                          }}
+                        >
                           <Tooltip title="Signaler">
                             <ReportIcon />
                           </Tooltip>
                         </IconButton>
-                        <Dialog
-                          open={open}
-                          onClose={handleClose}
-                          aria-labelledby="alert-dialog-title"
-                          aria-describedby="alert-dialog-description"
-                        >
-                          <DialogTitle id="alert-dialog-title">
-                            {"Signaler cette publication ?"}
-                          </DialogTitle>
-                          <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
-                              Êtes-vous sûr·e de vouloir signaler cette
-                              publication ? Si oui la modération examinera si
-                              cette publication enfreint les standards de notre
-                              groupe.
-                            </DialogContentText>
-                          </DialogContent>
-                          <DialogActions>
-                            <Button onClick={handleClose}>Annuler</Button>
-                            <Button
-                              onClick={() => {
-                                reportPost(value.id);
-                                handleClose();
-                              }}
-                              autoFocus
-                            >
-                              Confirmer
-                            </Button>
-                          </DialogActions>
-                        </Dialog>
                       </>
                     ) : (
-                      <>
-                        <Tooltip title="Publication déjà signalée">
-                          <ReportIcon sx={{ color: "#d3d3d3" }} />
-                        </Tooltip>
-                      </>
+                      <></>
                     )}
                   </>
                 }
@@ -264,9 +234,58 @@ function Home() {
                   }}
                 >
                   <ForumIcon sx={{ fontSize: 50 }} />
-                  <div>{value.Likes.length}</div>
+                  <div>{value.Comments.length}</div>
                 </Button>
               </CardActions>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Commentaires</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <List>
+                    {value.Comments.map((comment) => {
+                      return (
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar
+                              sx={{ bgcolor: red[500] }}
+                              aria-label="recipe"
+                            >
+                              {getInitialsFromName(comment.username)}
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={comment.message}
+                            secondary={
+                              <>
+                                <Typography
+                                  component="span"
+                                  variant="body2"
+                                  color="textPrimary"
+                                >
+                                  {comment.username}
+                                </Typography>
+                                {" — "}
+                                <Typography
+                                  component="span"
+                                  variant="body2"
+                                  color="textPrimary"
+                                >
+                                  {formatDate(comment.createdAt)}
+                                </Typography>
+                              </>
+                            }
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
             </Card>
           </Container>
         );

@@ -9,10 +9,20 @@ const { validateAdmin } = require("../middlewares/admin");
 router.get("/", validateToken, async (req, res) => {
   // on récupère tous les posts
   const listOfPosts = await Posts.findAll(
-    // on embarque également les Likes pour les traiter
-    { include: [Likes] },
-    // { include: [Comments] },
-    { order: ["id", "DESC"] }
+    // order by date de création du post (desc), includes les likes et les comments
+    {
+      order: [["createdAt", "DESC"]],
+      include: [
+        {
+          model: Likes,
+          as: "Likes",
+        },
+        {
+          model: Comments,
+          as: "Comments",
+        },
+      ],
+    }
   );
   // on cherche les posts likés par le user
   const likedPosts = await Likes.findAll({ where: { UserId: req.user.id } });
@@ -72,8 +82,10 @@ router.get("/read/flagged", validateAdmin, async (req, res) => {
 // flag a post
 router.put("/flag/:postId", validateToken, async (req, res) => {
   const postId = req.params.postId;
+  console.log(postId);
   const post = await Posts.findByPk(postId);
   post.isFlagged = true;
+  console.log(post);
   await post.save();
   res.json("Publication signalée");
 });

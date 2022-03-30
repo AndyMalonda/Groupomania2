@@ -11,6 +11,8 @@ import Profile from "./components/Profile";
 import Post from "./components/Post";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import ChangePassword from "./components/ChangePassword";
+
 import PageNotFound from "./components/PageNotFound";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
@@ -64,6 +66,7 @@ function App() {
           <Route path="/createpost" element={<CreatePost />} />
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </ThemeProvider>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 // MUI
 import CssBaseline from "@mui/material/CssBaseline";
@@ -29,11 +30,19 @@ function Register() {
 
   let navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    axios.post("http://localhost:3006/users", data).then(() => {
-      navigate("/");
-    });
-  };
+  async function onSubmit(data) {
+    try {
+      const response = await axios.post("http://localhost:3006/users", data);
+      if (response.data.error) {
+        toast.error(response.data.error);
+      } else {
+        toast.success(response.data);
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  }
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -41,7 +50,10 @@ function Register() {
       .required("Champs requis"),
     password: Yup.string()
       .required("Champs requis")
-      .min(8, "Doit contenir au moins 8 caractères"),
+      .matches(
+        /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+        "Doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial"
+      ),
     username: Yup.string()
       .required("Champs requis")
       .min(2, "Doit contenir au moins 2 caractères"),
@@ -149,6 +161,7 @@ function Register() {
           <Link href="/login">Déjà inscrit·e ?</Link>
         </Grid>
       </Container>
+      <Toaster />
     </div>
   );
 }

@@ -60,7 +60,9 @@ export default function Profile() {
                 {authState.username === username && (
                   <List>
                     <ListItem>
-                      <Button>Changer le mot de passe</Button>
+                      <Button href="/changepassword">
+                        Changer le mot de passe
+                      </Button>
                     </ListItem>
                     <ListItem>
                       <Button sx={{ color: "red" }}>Supprimer le compte</Button>
