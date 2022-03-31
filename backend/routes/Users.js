@@ -105,7 +105,7 @@ router.delete("/delete", validateToken, async (req, res) => {
       res.status(400).send("Mot de passe incorrect");
     } else {
       await Users.destroy({ where: { username: req.user.username } });
-      res.status(200).send("Compte supprimé avec succès.");
+      res.status(200).send("Compte supprimé avec succès");
     }
   });
 });

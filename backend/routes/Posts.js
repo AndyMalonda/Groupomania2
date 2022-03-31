@@ -30,7 +30,7 @@ router.get("/", validateToken, async (req, res) => {
   res.json({ listOfPosts: listOfPosts, likedPosts: likedPosts });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateToken, async (req, res) => {
   // on récupère la data dans les params de la req
   const id = req.params.id;
   // on cherche la primary key correspondante dans l'array Posts
@@ -39,7 +39,7 @@ router.get("/:id", async (req, res) => {
   res.json(post);
 });
 
-router.get("/byuserId/:id", async (req, res) => {
+router.get("/byuserId/:id", validateToken, async (req, res) => {
   // on récupère la data dans les params de la req
   const id = req.params.id;
   // on cherche la primary key correspondante dans l'array Posts
