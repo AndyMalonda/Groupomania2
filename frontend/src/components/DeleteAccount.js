@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
@@ -16,20 +16,30 @@ export default function DeleteAccount() {
     confirmPassword: "",
   };
 
+  const validationSchema = Yup.object().shape({
+    password: Yup.string().required("Mot de passe requis"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Le mot de passe ne correspond pas")
+      .required("Confirmation requise"),
+  });
+
+  // make a request to delete the account and redirect to the login page  //
   async function onSubmit(data) {
     try {
       const response = await axios.delete(
         "http://localhost:3006/users/delete",
-        data,
         {
           headers: { token: sessionStorage.getItem("token") },
+          data: { password: data.password },
         }
       );
       if (response.data.error) {
         toast.error(response.data.error);
+      } else {
+        toast.success(response.data);
+        sessionStorage.removeItem("token");
+        navigate("/");
       }
-      toast.success("Votre compte a été supprimé.");
-      navigate("/");
     } catch (error) {
       toast.error(error.response.data);
     }
@@ -60,7 +70,9 @@ export default function DeleteAccount() {
             name="confirmPassword"
             placeholder="Confirmer le nouveau mot de passe"
           />
-          <Button type="submit">Changer le mot de passe</Button>
+          <Button type="submit" sx={{ color: "red" }}>
+            Supprimer le compte
+          </Button>
         </Form>
       </Formik>
       <BackButton />

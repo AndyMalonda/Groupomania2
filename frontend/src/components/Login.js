@@ -40,12 +40,7 @@ function Login() {
         toast.error(response.data.error);
       } else {
         sessionStorage.setItem("token", response.data.token);
-        setAuthState({
-          username: response.data.username,
-          id: response.data.id,
-          status: true,
-        });
-        toast.success(response.data);
+        setAuthState(true);
         navigate("/");
       }
     } catch (error) {

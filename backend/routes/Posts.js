@@ -51,6 +51,48 @@ router.get("/byuserId/:id", async (req, res) => {
   res.json(listOfPosts);
 });
 
+// create a new post with the data in the body and the username of the user in the token (req.user.username)  //
+router.post("/create", validateToken, async (req, res) => {
+  // on récupère les données dans le body de la req
+  const { title, message, imageUrl } = req.body;
+  // on crée le post
+  const post = await Posts.create({
+    title,
+    message,
+    imageUrl,
+    username: req.user.username,
+    UserId: req.user.id,
+  });
+  // on renvoie
+  res.json(post);
+});
+
+router.post("/", validateToken, async (req, res) => {
+  // on récupère la data du body de la req
+  const post = req.body;
+  const username = req.user.username;
+  const userId = req.user.id;
+  post.username = username;
+  post.UserId = userId;
+  // on crée l'entrée dans l'array Posts
+  await Posts.create(post);
+  // on renvoie
+  res.json(post);
+});
+
+router.post("/", validateToken, async (req, res) => {
+  // on récupère la data du body de la req
+  const post = req.body;
+  const username = req.user.username;
+  const userId = req.user.id;
+  post.username = username;
+  post.UserId = userId;
+  // on crée l'entrée dans l'array Posts
+  await Posts.create(post);
+  // on renvoie
+  res.json(post);
+});
+
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;

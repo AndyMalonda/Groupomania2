@@ -65,7 +65,9 @@ export default function Profile() {
                       </Button>
                     </ListItem>
                     <ListItem>
-                      <Button sx={{ color: "red" }}>Supprimer le compte</Button>
+                      <Button href="/deleteaccount" sx={{ color: "red" }}>
+                        Supprimer le compte
+                      </Button>
                     </ListItem>
                   </List>
                 )}

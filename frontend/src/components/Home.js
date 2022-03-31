@@ -49,7 +49,6 @@ function Home() {
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
-  const currentUsername = authState.username;
 
   const navigate = useNavigate();
   const notifyLike = () => toast("Vous aimez cette publication !");
@@ -74,7 +73,7 @@ function Home() {
           );
         });
     }
-  }, [navigate]);
+  }, []);
 
   const likePost = (postId) => {
     axios
@@ -289,7 +288,7 @@ function Home() {
                     <ListItem>
                       <ListItemAvatar>
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                          {getInitialsFromName(currentUsername)}
+                          You
                         </Avatar>
                       </ListItemAvatar>
                       <Button onClick={() => navigate(`/posts/${value.id}`)}>

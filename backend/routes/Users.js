@@ -32,14 +32,12 @@ router.post("/", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, username, password } = req.body;
-  const user = await Users.findOne({ where: { email: email } });
+  const user = await Users.findOne({ where: { email } });
   if (!user) {
-    res.status(400).send("Nom d'utilisateur introuvable");
+    res.status(400).send("L'utilisateur n'existe pas");
   } else {
-    bcrypt.compare(password, user.password).then((match) => {
-      if (!match) {
-        res.status(400).send("Mot de passe incorrect");
-      } else {
+    bcrypt.compare(password, user.password).then((isMatch) => {
+      if (isMatch) {
         const token = sign(
           {
             email: user.email,
@@ -47,16 +45,20 @@ router.post("/login", async (req, res) => {
             id: user.id,
             isAdmin: user.isAdmin,
           },
-          process.env.TOKEN
+          process.env.TOKEN,
+          {
+            expiresIn: "1h",
+          }
         );
-        res.json({
+        res.status(200).json({
           token: token,
           username: username,
           id: user.id,
           isAdmin: user.isAdmin,
         });
+      } else {
+        res.status(400).send("Mot de passe incorrect");
       }
-      res.status(200).send("Connexion réussie");
     });
   }
 });
@@ -93,18 +95,17 @@ router.put("/password", validateToken, async (req, res) => {
   });
 });
 
-// router for a user to delete his account with password confirmation and token validation
-router.delete("/", validateToken, async (req, res) => {
+router.delete("/delete", validateToken, async (req, res) => {
   const { password } = req.body;
   const user = await Users.findOne({
     where: { username: req.user.username },
   });
-  bcrypt.compare(password, user.password).then((match) => {
+  bcrypt.compare(password, user.password).then(async (match) => {
     if (!match) {
       res.status(400).send("Mot de passe incorrect");
     } else {
-      Users.destroy({ where: { username: req.user.username } });
-      res.status(200).send("Compte supprimé");
+      await Users.destroy({ where: { username: req.user.username } });
+      res.status(200).send("Compte supprimé avec succès.");
     }
   });
 });

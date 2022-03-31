@@ -20,21 +20,26 @@ function CreatePost() {
     }
   });
 
-  const onSubmit = (data) => {
-    axios
-      .post("http://localhost:3006/posts", data, {
-        headers: { token: sessionStorage.getItem("token") },
-      })
-      .then((response) => {
-        if (response.data.error) {
-          alert(response.data.error);
-          navigate("/login");
-        } else {
-          notify();
-          navigate("/");
+  // function onSubmit to make a post request to create a new post  //
+  async function onSubmit(data) {
+    try {
+      const response = await axios.post(
+        "http://localhost:3006/posts/create",
+        data,
+        {
+          headers: { token: sessionStorage.getItem("token") },
         }
-      });
-  };
+      );
+      if (response.data.error) {
+        toast.error(response.data.error);
+      } else {
+        notify();
+        navigate("/");
+      }
+    } catch (error) {
+      toast.error(error.response.data);
+    }
+  }
 
   return (
     <div className="CreatePost">
