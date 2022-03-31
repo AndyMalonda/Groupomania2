@@ -25,13 +25,33 @@ export default function Profile() {
   const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    axios.get(`http://localhost:3006/users/profile/${id}`).then((res) => {
-      setUsername(res.data.username);
-    });
-    axios.get(`http://localhost:3006/posts/byuserId/${id}`).then((res) => {
-      setListOfPosts(res.data);
-    });
-  }, []);
+    axios
+      .get(`http://localhost:3006/users/profile/${id}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setUsername(res.data.username);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    axios
+      .get(`http://localhost:3006/posts/byuserId/${id}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setListOfPosts(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
+
+  if (!authState) {
+    navigate("/login");
+  }
 
   return (
     <div>
@@ -75,33 +95,29 @@ export default function Profile() {
             </Box>
           </Grid>
           <Grid item xs={8}>
-            <Card>
-              <CardHeader title="Publications" />
-
-              {listOfPosts.map((value, key) => {
-                return (
-                  <React.Fragment key={key}>
-                    <Divider />
-                    <ListItem
-                      sx={{
-                        "&:hover": {
-                          cursor: "pointer",
-                          backgroundColor: "#f5f5f5",
-                        },
-                      }}
-                      onClick={() => {
-                        navigate(`/posts/${value.id}`);
-                      }}
-                    >
-                      <ListItemText
-                        primary={value.title}
-                        secondary={value.message}
-                      ></ListItemText>
-                    </ListItem>
-                  </React.Fragment>
-                );
-              })}
-            </Card>
+            {listOfPosts.map((value, key) => {
+              return (
+                <React.Fragment key={key}>
+                  <Divider />
+                  <ListItem
+                    sx={{
+                      "&:hover": {
+                        cursor: "pointer",
+                        backgroundColor: "#f5f5f5",
+                      },
+                    }}
+                    onClick={() => {
+                      navigate(`/posts/${value.id}`);
+                    }}
+                  >
+                    <ListItemText
+                      primary={value.title}
+                      secondary={value.message}
+                    ></ListItemText>
+                  </ListItem>
+                </React.Fragment>
+              );
+            })}
           </Grid>
         </Grid>
       </Box>

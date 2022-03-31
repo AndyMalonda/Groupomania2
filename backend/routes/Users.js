@@ -67,12 +67,17 @@ router.get("/auth", validateToken, (req, res) => {
   res.json(req.user);
 });
 
+// make a get request to /users/:id to get the user with the id in the url  with try catch  //
 router.get("/profile/:id", async (req, res) => {
-  const id = req.params.id;
-  const basicInfo = await Users.findByPk(id, {
-    attributes: { exclude: ["password"] },
-  });
-  res.json(basicInfo);
+  try {
+    const user = await Users.findOne({
+      where: { id: req.params.id },
+      attributes: { exclude: ["password"] },
+    });
+    res.json(user);
+  } catch (error) {
+    res.status(400).send("User not found");
+  }
 });
 
 router.put("/password", validateToken, async (req, res) => {

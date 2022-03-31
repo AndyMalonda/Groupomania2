@@ -51,7 +51,6 @@ router.get("/byuserId/:id", validateToken, async (req, res) => {
   res.json(listOfPosts);
 });
 
-// create a new post with the data in the body and the username of the user in the token (req.user.username)  //
 router.post("/create", validateToken, async (req, res) => {
   // on récupère les données dans le body de la req
   const { title, message, imageUrl } = req.body;
