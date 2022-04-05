@@ -40,13 +40,21 @@ function Post() {
   const notifyDeletePost = () => toast.success("Publication supprimée !");
 
   useEffect(() => {
-    axios.get(`http://localhost:3006/posts/${id}`).then((response) => {
-      setPostObject(response.data);
-    });
-    axios.get(`http://localhost:3006/comments/${id}`).then((response) => {
-      setComments(response.data);
-      console.log(response.data);
-    });
+    axios
+      .get(`http://localhost:3006/posts/${id}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        setPostObject(response.data);
+      });
+    axios
+      .get(`http://localhost:3006/comments/${id}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        setComments(response.data);
+        console.log(response.data);
+      });
   }, [id]);
 
   const addComment = () => {

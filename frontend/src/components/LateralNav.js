@@ -22,7 +22,7 @@ const actions = [
 export default function LateralNav() {
   const { setAuthState } = useContext(AuthContext);
   const navigate = useNavigate("");
-  const id = useContext(AuthContext).authState.id;
+  const id = 1;
 
   const scrollToTop = () => {
     window.scrollTo({

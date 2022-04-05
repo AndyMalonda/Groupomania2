@@ -54,7 +54,6 @@ function Home() {
   const notifyLike = () => toast("Vous aimez cette publication !");
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
-  // redirect to login page if not logged in
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
       navigate("/login");

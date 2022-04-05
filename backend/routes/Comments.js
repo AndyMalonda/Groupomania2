@@ -3,7 +3,7 @@ const router = express.Router();
 const { Comments } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 
-router.get("/:postId", async (req, res) => {
+router.get("/:postId", validateToken, async (req, res) => {
   // on récupère la data dans la req
   const postId = req.params.postId;
   // on récupère tous les comments correspondant au post dans l'array Comments
