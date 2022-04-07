@@ -23,6 +23,8 @@ export default function Profile() {
   const navigate = useNavigate();
   const [listOfPosts, setListOfPosts] = useState([]);
   const { authState } = useContext(AuthContext);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     axios
@@ -30,8 +32,17 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        console.log(res.data);
         setUsername(res.data.username);
+        axios
+          .get(`http://localhost:3006${res.data.avatar}`, {
+            headers: { token: sessionStorage.getItem("token") },
+          })
+          .then((res) => {
+            setAvatarPreview(res.config.url);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -41,7 +52,6 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        console.log(res.data);
         setListOfPosts(res.data);
       })
       .catch((err) => {
@@ -52,6 +62,58 @@ export default function Profile() {
   if (!authState) {
     navigate("/login");
   }
+
+  const changeHandler = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+    axios
+      .put(`http://localhost:3006/users/avatar`, formData, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((res) => {
+        axios
+          .get(`http://localhost:3006/users/profile/${id}`, {
+            headers: { token: sessionStorage.getItem("token") },
+          })
+          .then((res) => {
+            axios
+              .get(`http://localhost:3006${res.data.avatar}`, {
+                headers: { token: sessionStorage.getItem("token") },
+              })
+              .then((res) => {
+                setAvatarPreview(res.config.url);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // possibilité de factoriser le code pour setAvatarPreview:
+  /*   function setAvatar(res, setAvatarPreview) {
+    axios
+      .get(`http://localhost:3006${res.data.avatar}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((res) => {
+        setAvatarPreview(res.config.url);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } */
 
   return (
     <div>
@@ -69,16 +131,24 @@ export default function Profile() {
                 <CardHeader title={username} component="div"></CardHeader>
                 <CardMedia component="div">
                   <Avatar
-                    alt="Avatar"
-                    src="https://medias.lavie.fr/api/v1/images/view/5f5fea37d286c2387a297417/width_1000/image.jpg"
-                    sx={{
-                      width: 300,
-                      height: 300,
-                    }}
+                    size="md"
+                    src={avatarPreview}
+                    sx={{ width: 200, height: 200 }}
                   />
                 </CardMedia>
                 {authState.username === username && (
                   <List>
+                    <ListItem>
+                      <Button>
+                        <form
+                          onSubmit={handleSubmit}
+                          encType="multipart/form-data"
+                        >
+                          <input type="file" onChange={changeHandler} />
+                          <input type="submit" value="Upload File" />
+                        </form>
+                      </Button>
+                    </ListItem>
                     <ListItem>
                       <Button href="/changepassword">
                         Changer le mot de passe

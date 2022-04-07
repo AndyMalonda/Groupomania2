@@ -4,6 +4,8 @@ const { Users } = require("../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../middlewares/auth");
+const multer = require("../middlewares/multer-config");
+const fs = require("fs");
 
 router.post("/", async (req, res) => {
   const { email, username, password } = req.body;
@@ -67,7 +69,6 @@ router.get("/auth", validateToken, (req, res) => {
   res.json(req.user);
 });
 
-// make a get request to /users/:id to get the user with the id in the url  with try catch  //
 router.get("/profile/:id", async (req, res) => {
   try {
     const user = await Users.findOne({
@@ -98,6 +99,24 @@ router.put("/password", validateToken, async (req, res) => {
       });
     }
   });
+});
+
+router.put("/avatar", validateToken, multer, async (req, res) => {
+  // delete the old avatar of the user
+  const user = await Users.findOne({
+    where: { username: req.user.username },
+  });
+  if (user.avatar) {
+    fs.unlink(`images/${user.avatar}`, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  }
+  const avatar = `/images/${req.file.filename}`;
+  Users.update({ avatar: avatar }, { where: { username: req.user.username } });
+  res.status(200).send("Avatar modifié avec succès.");
+  res.send(avatar);
 });
 
 router.delete("/delete", validateToken, async (req, res) => {

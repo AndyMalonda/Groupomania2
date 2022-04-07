@@ -3,6 +3,7 @@ const app = express();
 require("dotenv").config();
 const db = require("./models");
 const cors = require("cors");
+const path = require("path");
 
 app.use(express.json());
 app.use(cors());
@@ -31,3 +32,5 @@ db.sequelize
   .catch((err) => {
     console.log(err);
   });
+
+app.use("/images", express.static(path.join(__dirname, "images")));
