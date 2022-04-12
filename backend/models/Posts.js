@@ -15,10 +15,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(3500),
         allowNull: false,
       },
-      username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       imageUrl: {
         type: DataTypes.STRING(600),
         allowNull: false,
@@ -32,11 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Posts.associate = (models) => {
-    Posts.hasMany(models.Comments, {
-      onDelete: "cascade",
-    });
-
-    Posts.hasMany(models.Likes, {
+    Posts.belongsTo(models.Users, {
       onDelete: "cascade",
     });
   };

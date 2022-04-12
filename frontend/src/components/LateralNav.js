@@ -1,11 +1,11 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
 import { AuthContext } from "../contexts/auth-context";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -22,7 +22,7 @@ const actions = [
 export default function LateralNav() {
   const { setAuthState } = useContext(AuthContext);
   const navigate = useNavigate("");
-  const id = 1;
+  const id = useContext(AuthContext).authState.id;
 
   const scrollToTop = () => {
     window.scrollTo({

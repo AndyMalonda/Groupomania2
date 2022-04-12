@@ -23,7 +23,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [listOfPosts, setListOfPosts] = useState([]);
   const { authState } = useContext(AuthContext);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
@@ -34,11 +34,11 @@ export default function Profile() {
       .then((res) => {
         setUsername(res.data.username);
         axios
-          .get(`http://localhost:3006${res.data.avatar}`, {
+          .get(`${res.data.avatar}`, {
             headers: { token: sessionStorage.getItem("token") },
           })
           .then((res) => {
-            setAvatarPreview(res.config.url);
+            setAvatarUrl(res.config.url);
           })
           .catch((err) => {
             console.log(err);
@@ -82,11 +82,11 @@ export default function Profile() {
           })
           .then((res) => {
             axios
-              .get(`http://localhost:3006${res.data.avatar}`, {
+              .get(`${res.data.avatar}`, {
                 headers: { token: sessionStorage.getItem("token") },
               })
               .then((res) => {
-                setAvatarPreview(res.config.url);
+                setAvatarUrl(res.config.url);
               })
               .catch((err) => {
                 console.log(err);
@@ -101,14 +101,14 @@ export default function Profile() {
       });
   };
 
-  // possibilité de factoriser le code pour setAvatarPreview:
-  /*   function setAvatar(res, setAvatarPreview) {
+  // possibilité de factoriser le code pour setAvatarUrl:
+  /*   function setAvatar(res, setAvatarUrl) {
     axios
       .get(`http://localhost:3006${res.data.avatar}`, {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        setAvatarPreview(res.config.url);
+        setAvatarUrl(res.config.url);
       })
       .catch((err) => {
         console.log(err);
@@ -132,7 +132,7 @@ export default function Profile() {
                 <CardMedia component="div">
                   <Avatar
                     size="md"
-                    src={avatarPreview}
+                    src={avatarUrl}
                     sx={{ width: 200, height: 200 }}
                   />
                 </CardMedia>

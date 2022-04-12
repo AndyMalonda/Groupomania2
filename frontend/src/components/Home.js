@@ -13,6 +13,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import defaultAvatar from "../default.png";
 
 // Utilities
 import { formatDate, getInitialsFromName } from "../services/utilities";
@@ -49,14 +50,22 @@ function Home() {
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
-
+  const [avatarUrl, setAvatarUrl] = useState("");
   const navigate = useNavigate();
   const notifyLike = () => toast("Vous aimez cette publication !");
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
+      console.log("no token in storage");
       navigate("/login");
+      return;
+    }
+    if (!authState) {
+      console.log("no authState");
+      sessionStorage.removeItem("token");
+      navigate("/login");
+      return;
     } else {
       axios
         .get("http://localhost:3006/posts", {
@@ -70,6 +79,9 @@ function Home() {
               return like.PostId;
             })
           );
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   }, []);
@@ -84,16 +96,22 @@ function Home() {
       .then((response) => {
         console.log(response.data);
         setListOfPosts(
+          // render the new list of posts
           listOfPosts.map((post) => {
+            // if the postId matches the postId of the post we just liked
             if (post.id === postId) {
               if (response.data.liked) {
                 notifyLike();
+                // push the postId to the Likes array
                 post.Likes.push(0);
+                // return the post with the new Likes array
                 return post;
               } else {
                 const likesArray = post.Likes;
+                // remove the last element of the Likes array
                 likesArray.pop();
                 notifyUnlike();
+                // and return the post with the new array
                 return { ...post, Likes: likesArray };
               }
             } else {
@@ -101,13 +119,16 @@ function Home() {
             }
           })
         );
+        // if the likedPosts array contains the postId we just liked
         if (likedPosts.includes(postId)) {
           setLikedPosts(
+            // filter the likedPosts array to remove the postId
             likedPosts.filter((id) => {
               return id !== postId;
             })
           );
         } else {
+          // else add the postId to the likedPosts array and set the state
           setLikedPosts([...likedPosts, postId]);
         }
       });
@@ -133,6 +154,28 @@ function Home() {
       });
   };
 
+  // const getImageUrl = (userId) => {
+  //   axios
+  //     .get(`http://localhost:3006/users/avatar/${userId}`, {
+  //       headers: { token: sessionStorage.getItem("token") },
+  //     })
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       setAvatarUrl(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
+  const isNotAuthor = (post) => {
+    if (post.UserId === authState.id) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   return (
     <div className="Home">
       {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
@@ -148,16 +191,14 @@ function Home() {
                   <>
                     <Tooltip title={value.username}>
                       <Link to={`/profile/${value.UserId}`}>
-                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                          {getInitialsFromName(value.username)}
-                        </Avatar>
+                        {/* <Avatar src={getImageUrl(value.UserId)} /> */}
                       </Link>
                     </Tooltip>
                   </>
                 }
                 action={
                   <>
-                    {!value.isFlagged ? (
+                    {!value.isFlagged && isNotAuthor(value) ? (
                       <>
                         <IconButton
                           aria-label="flag"
@@ -291,7 +332,7 @@ function Home() {
                         </Avatar>
                       </ListItemAvatar>
                       <Button onClick={() => navigate(`/posts/${value.id}`)}>
-                        Participer à la conversation !
+                        Participer à la conversation
                       </Button>
                     </ListItem>
                   </List>

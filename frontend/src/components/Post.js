@@ -9,6 +9,8 @@ import { BackButton } from "./BackButton";
 import SendIcon from "@mui/icons-material/Send";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ReportIcon from "@mui/icons-material/Report";
+import ReportOffIcon from "@mui/icons-material/ReportOff";
 
 // MUI
 import {
@@ -25,6 +27,7 @@ import {
   ListItemText,
   CardMedia,
   IconButton,
+  ListItemIcon,
 } from "@mui/material";
 
 function Post() {
@@ -88,9 +91,32 @@ function Post() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then(() => {
+        toast.success("Commentaire supprimé !");
         setComments(
           comments.filter((val) => {
             return val.id !== id;
+          })
+        );
+      });
+  };
+
+  const flagComment = (commentId) => {
+    axios
+      .put(
+        `http://localhost:3006/comments/flag/${commentId}`,
+        { commentId: commentId },
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
+      .then((response) => {
+        console.log(response.data);
+        toast.success("Commentaire signalé !");
+        // reset list of comments
+        setComments(
+          comments.map((val) => {
+            if (val.id === commentId) {
+              val.isFlagged = true;
+            }
+            return val;
           })
         );
       });
@@ -103,6 +129,23 @@ function Post() {
       })
       .then(() => {
         navigate("/");
+        notifyDeletePost();
+      });
+  };
+
+  const unflagPost = (postId) => {
+    axios
+      .put(
+        `http://localhost:3006/posts/unflag/${postId}`,
+        { postId: postId },
+        { headers: { token: sessionStorage.getItem("token") } }
+      )
+      .then(() => {
+        navigate("/");
+        toast.success("Publication désignalée !");
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -119,6 +162,9 @@ function Post() {
               sx={{ maxHeight: 520 }}
             />
             <ListItem>
+              <ListItemIcon>
+                <Avatar>{postObject.username}</Avatar>
+              </ListItemIcon>
               <ListItemText
                 primary={postObject.title}
                 secondary={postObject.message}
@@ -142,7 +188,14 @@ function Post() {
                 {comments.map((comment, key) => {
                   return (
                     <React.Fragment key={comment.id}>
-                      <ListItem>
+                      <ListItem
+                        sx={{
+                          backgroundColor:
+                            comment.isFlagged && authState.isAdmin
+                              ? "#ffff85"
+                              : "",
+                        }}
+                      >
                         <ListItemAvatar>
                           <Avatar
                             alt="Profile Picture"
@@ -154,16 +207,31 @@ function Post() {
                           secondary={comment.message}
                         />
 
-                        {authState.username === comment.username && (
-                          <IconButton
-                            size="small"
-                            onClick={() => {
-                              deleteComment(comment.id);
-                              notifyDeleteComment();
-                            }}
-                          >
-                            <HighlightOffIcon />
-                          </IconButton>
+                        {authState.username === comment.username ||
+                        authState.isAdmin === true ? (
+                          <>
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                deleteComment(comment.id);
+                              }}
+                            >
+                              <HighlightOffIcon />
+                            </IconButton>
+                          </>
+                        ) : comment.isFlagged ? (
+                          <></>
+                        ) : (
+                          <>
+                            <IconButton
+                              size="small"
+                              onClick={() => {
+                                flagComment(comment.id);
+                              }}
+                            >
+                              <ReportIcon />
+                            </IconButton>
+                          </>
                         )}
                       </ListItem>
                     </React.Fragment>
@@ -202,6 +270,17 @@ function Post() {
           <DeleteIcon sx={{ fontSize: 50 }} />
         </IconButton>
       )}
+      {authState.isAdmin === true && postObject.isFlagged === true && (
+        <IconButton
+          sx={{ position: "absolute", bottom: 10, right: 180 }}
+          onClick={() => {
+            unflagPost(postObject.id);
+          }}
+        >
+          <ReportOffIcon sx={{ fontSize: 50 }} />
+        </IconButton>
+      )}
+
       <Toaster />
     </div>
   );

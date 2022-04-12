@@ -1,11 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { AuthContext } from "../contexts/auth-context";
-import { Container, Box, Typography, Button } from "@mui/material";
-import { TextField } from "formik-mui";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { Select, TextField } from "formik-mui";
 import { BackButton } from "../components/BackButton";
 
 function CreatePost() {
@@ -20,7 +28,6 @@ function CreatePost() {
     }
   });
 
-  // function onSubmit to make a post request to create a new post  //
   async function onSubmit(data) {
     try {
       const response = await axios.post(

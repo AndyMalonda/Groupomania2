@@ -18,6 +18,7 @@ router.post("/", validateToken, async (req, res) => {
   const username = req.user.username;
   // on attribue l'auteur du commentaire directement à ce dernier
   comment.username = username;
+  comment.isFlaged = false;
   // on crée la ligne dans l'array Comments
   await Comments.create(comment);
   // on renvoie
@@ -44,6 +45,32 @@ router.delete("/:commentId", validateToken, async (req, res) => {
   await Comments.destroy({ where: { id: commentId } });
   // on renvoie une simple string en res
   res.json("Commentaire supprimé");
+});
+
+// flag a comment
+router.put("/flag/:commentId", validateToken, async (req, res) => {
+  const commentId = req.params.commentId;
+  const comment = await Comments.findByPk(commentId);
+  comment.isFlagged = true;
+  await comment.save();
+  res.json("Commentaire signalé");
+});
+
+// unflag a comment
+router.put("/unflag/:commentId", validateToken, async (req, res) => {
+  const commentId = req.params.commentId;
+  const comment = await Comments.findByPk(commentId);
+  comment.isFlagged = false;
+  await comment.save();
+  res.json("Commentaire désignalé");
+});
+
+// get all Comments where is flagged = true
+router.get("/read/flagged", validateToken, async (req, res) => {
+  const listOfComments = await Comments.findAll({
+    where: { isFlagged: true },
+  });
+  res.json(listOfComments);
 });
 
 module.exports = router;

@@ -5,16 +5,24 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true,
     },
-
     message: {
       type: DataTypes.STRING(2200),
       allowNull: false,
     },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    isFlagged: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   });
+
+  Comments.associate = (models) => {
+    Comments.belongsTo(models.Users, {
+      onDelete: "cascade",
+    });
+    Comments.belongsTo(models.Posts, {
+      onDelete: "cascade",
+    });
+  };
 
   return Comments;
 };

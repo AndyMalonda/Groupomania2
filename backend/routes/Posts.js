@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Posts, Likes, Comments } = require("../models");
+const { Posts, Likes, Users } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 const { validateAdmin } = require("../middlewares/admin");
 
@@ -12,22 +12,18 @@ router.get("/", validateToken, async (req, res) => {
     // order by date de création du post (desc), includes les likes et les comments
     {
       order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: Likes,
-          as: "Likes",
-        },
-        {
-          model: Comments,
-          as: "Comments",
-        },
-      ],
+      include: [{ model: Users }],
     }
   );
   // on cherche les posts likés par le user
   const likedPosts = await Likes.findAll({ where: { UserId: req.user.id } });
   // on renvoie l'objet
-  res.json({ listOfPosts: listOfPosts, likedPosts: likedPosts });
+  console.log(listOfPosts, likedPosts);
+
+  res.json({
+    listOfPosts: listOfPosts,
+    likedPosts: likedPosts,
+  });
 });
 
 router.get("/:id", validateToken, async (req, res) => {
