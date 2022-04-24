@@ -67,6 +67,7 @@ function Post() {
         {
           message: newComment,
           PostId: id,
+          // UserId: authState.id,
         },
         { headers: { token: sessionStorage.getItem("token") } }
       )
@@ -185,9 +186,9 @@ function Post() {
                 Commentaires
               </Typography>
               <List sx={{ mb: 2, maxHeight: 480, overflow: "auto" }}>
-                {comments.map((comment, key) => {
+                {comments.map((comment, index) => {
                   return (
-                    <React.Fragment key={comment.id}>
+                    <React.Fragment key={index}>
                       <ListItem
                         sx={{
                           backgroundColor:

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Posts, Likes, Users } = require("../models");
+const { Posts, Likes, Users, Comments } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 const { validateAdmin } = require("../middlewares/admin");
 
@@ -12,7 +12,7 @@ router.get("/", validateToken, async (req, res) => {
     // order by date de création du post (desc), includes les likes et les comments
     {
       order: [["createdAt", "DESC"]],
-      include: [{ model: Users }],
+      include: [{ model: Users }, { model: Likes }, { model: Comments }],
     }
   );
   // on cherche les posts likés par le user

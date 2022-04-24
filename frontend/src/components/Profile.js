@@ -32,8 +32,10 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
+        console.log(res.data);
         setUsername(res.data.username);
-        axios
+        if(res.data.avatar) {
+          axios
           .get(`${res.data.avatar}`, {
             headers: { token: sessionStorage.getItem("token") },
           })
@@ -43,6 +45,7 @@ export default function Profile() {
           .catch((err) => {
             console.log(err);
           });
+        } 
       })
       .catch((err) => {
         console.log(err);
@@ -52,6 +55,10 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
+        if(res.data.error){
+          throw new Error(res.data.error);
+        }
+
         setListOfPosts(res.data);
       })
       .catch((err) => {
@@ -165,7 +172,7 @@ export default function Profile() {
             </Box>
           </Grid>
           <Grid item xs={8}>
-            {listOfPosts.map((value, key) => {
+            {listOfPosts && listOfPosts.map((value, key) => {
               return (
                 <React.Fragment key={key}>
                   <Divider />

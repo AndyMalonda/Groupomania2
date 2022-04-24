@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Divider,
-  Icon,
+  // Icon,
   IconButton,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
+  // ListItemButton,
+  // ListItemIcon,
   ListItemText,
   Typography,
 } from "@mui/material";
@@ -15,7 +15,7 @@ import { BackButton } from "./BackButton";
 import { formatDate } from "../services/utilities";
 import ReportOffIcon from "@mui/icons-material/ReportOff";
 import DeleteIcon from "@mui/icons-material/Delete";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function AdminDashboard() {
   const [listOfPosts, setListOfPosts] = useState([]);

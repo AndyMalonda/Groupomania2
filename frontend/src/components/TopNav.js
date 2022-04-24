@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import { AuthContext } from "../contexts/auth-context";
 
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
@@ -21,7 +21,7 @@ export default function AccountMenu() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    if (id <= 0) {
+    if (!(id > 0)) {
       return;
     }
     console.log(id);

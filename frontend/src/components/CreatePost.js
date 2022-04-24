@@ -1,23 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, Field } from "formik";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { AuthContext } from "../contexts/auth-context";
+// import { AuthContext } from "../contexts/auth-context";
 import {
   Container,
   Box,
   Typography,
   Button,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  // MenuItem,
+  // FormControl,
+  // InputLabel,
 } from "@mui/material";
-import { Select, TextField } from "formik-mui";
+import { TextField } from "formik-mui";
 import { BackButton } from "../components/BackButton";
 
 function CreatePost() {
-  const { authState } = useContext(AuthContext);
+  // const { authState } = useContext(AuthContext);
   const initialValues = { title: "", message: "", imageUrl: "" };
   let navigate = useNavigate();
   const notify = () => toast("Votre post a été publié !");
