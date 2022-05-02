@@ -10,6 +10,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { Button, Divider, CardMedia, Avatar } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import NavLogo from "../navlogo.png";
+import NavLogoSmall from "../icon.png";
 import axios from "axios";
 
 export default function AccountMenu() {
@@ -24,7 +25,6 @@ export default function AccountMenu() {
     if (!(id > 0)) {
       return;
     }
-    console.log(id);
     axios
       .get(`http://localhost:3006/users/profile/${id}`, {
         headers: { token: sessionStorage.getItem("token") },
@@ -33,7 +33,6 @@ export default function AccountMenu() {
         // if (!res.data) {
         //   return;
         // }
-        console.log(res.data);
         setUsername(res.data.username);
         if (!res.data.avatar) {
           setAvatarUrl("");
@@ -93,11 +92,19 @@ export default function AccountMenu() {
           sx={{ width: 1, height: 1 }}
         >
           <Tooltip title="Accueil">
-            <CardMedia
-              component="img"
-              image={NavLogo}
-              sx={{ width: 1, height: 65 }}
-            />
+            {window.innerWidth > 768 ? (
+              <CardMedia
+                component="img"
+                image={NavLogo}
+                sx={{ width: 1, height: 65 }}
+              />
+            ) : (
+              <CardMedia
+                component="img"
+                image={NavLogoSmall}
+                sx={{ width: 65, height: 65, display: "inline" }}
+              />
+            )}
           </Tooltip>
         </Box>
         <Divider orientation="vertical" variant="middle" flexItem />

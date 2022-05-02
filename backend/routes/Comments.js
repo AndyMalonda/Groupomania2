@@ -66,6 +66,7 @@ router.put("/unflag/:commentId", validateToken, async (req, res) => {
 router.get("/read/flagged", validateToken, async (req, res) => {
   const listOfComments = await Comments.findAll({
     where: { isFlagged: true },
+    include: [{ model: Users, attributes: ["username"] }],
   });
   res.json(listOfComments);
 });

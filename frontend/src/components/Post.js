@@ -48,7 +48,6 @@ function Post() {
       })
       .then((response) => {
         setPostObject(response.data);
-        console.log(response.data);
       });
     axios
       .get(`http://localhost:3006/comments/${id}`, {

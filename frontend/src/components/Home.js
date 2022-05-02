@@ -160,7 +160,8 @@ function Home() {
 
   return (
     <div className="Home">
-      {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
+      {/* {window.innerWidth < 768 ? <LateralNav /> : <TopNav />} */}
+      <TopNav />
       {listOfPosts &&
         listOfPosts.map((value, key) => {
           return (
@@ -181,7 +182,7 @@ function Home() {
                   }
                   action={
                     <>
-                      {!value.isFlagged && isNotAuthor(value) ? (
+                      {!value.isFlagged && isNotAuthor(value) && (
                         <>
                           <IconButton
                             aria-label="flag"
@@ -194,8 +195,6 @@ function Home() {
                             </Tooltip>
                           </IconButton>
                         </>
-                      ) : (
-                        <></>
                       )}
                     </>
                   }

@@ -11,11 +11,13 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 const actions = [
   { icon: <KeyboardArrowUpIcon />, name: "Retourner en haut" },
   { icon: <PostAddIcon />, name: "Nouvelle publication" },
   { icon: <AccountCircleIcon />, name: "Votre profil" },
+  { icon: <AdminPanelSettingsIcon />, name: "Modération" },
   { icon: <LogoutIcon />, name: "Se déconnecter" },
 ];
 
@@ -23,6 +25,7 @@ export default function LateralNav() {
   const { setAuthState } = useContext(AuthContext);
   const navigate = useNavigate("");
   const id = useContext(AuthContext).authState.id;
+  const isAdmin = useContext(AuthContext).authState.isAdmin;
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -44,7 +47,7 @@ export default function LateralNav() {
         transform: "translateZ(0px)",
         flexGrow: 1,
         position: "fixed",
-        bottom: 16,
+        bottom: 56,
         right: 16,
         zIndex: "tooltip",
       }}
@@ -68,6 +71,9 @@ export default function LateralNav() {
                   break;
                 case "Se déconnecter":
                   clearSession();
+                  break;
+                case isAdmin === true && "Modération":
+                  navigate(`/admindashboard`);
                   break;
               }
             }}

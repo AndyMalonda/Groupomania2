@@ -32,20 +32,19 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        console.log(res.data);
         setUsername(res.data.username);
-        if(res.data.avatar) {
+        if (res.data.avatar) {
           axios
-          .get(`${res.data.avatar}`, {
-            headers: { token: sessionStorage.getItem("token") },
-          })
-          .then((res) => {
-            setAvatarUrl(res.config.url);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        } 
+            .get(`${res.data.avatar}`, {
+              headers: { token: sessionStorage.getItem("token") },
+            })
+            .then((res) => {
+              setAvatarUrl(res.config.url);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -55,7 +54,7 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        if(res.data.error){
+        if (res.data.error) {
           throw new Error(res.data.error);
         }
 
@@ -172,29 +171,30 @@ export default function Profile() {
             </Box>
           </Grid>
           <Grid item xs={8}>
-            {listOfPosts && listOfPosts.map((value, key) => {
-              return (
-                <React.Fragment key={key}>
-                  <Divider />
-                  <ListItem
-                    sx={{
-                      "&:hover": {
-                        cursor: "pointer",
-                        backgroundColor: "#f5f5f5",
-                      },
-                    }}
-                    onClick={() => {
-                      navigate(`/posts/${value.id}`);
-                    }}
-                  >
-                    <ListItemText
-                      primary={value.title}
-                      secondary={value.message}
-                    ></ListItemText>
-                  </ListItem>
-                </React.Fragment>
-              );
-            })}
+            {listOfPosts &&
+              listOfPosts.map((value, key) => {
+                return (
+                  <React.Fragment key={key}>
+                    <Divider />
+                    <ListItem
+                      sx={{
+                        "&:hover": {
+                          cursor: "pointer",
+                          backgroundColor: "#f5f5f5",
+                        },
+                      }}
+                      onClick={() => {
+                        navigate(`/posts/${value.id}`);
+                      }}
+                    >
+                      <ListItemText
+                        primary={value.title}
+                        secondary={value.message}
+                      ></ListItemText>
+                    </ListItem>
+                  </React.Fragment>
+                );
+              })}
           </Grid>
         </Grid>
       </Box>

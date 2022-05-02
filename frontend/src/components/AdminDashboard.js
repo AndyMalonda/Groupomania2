@@ -39,7 +39,7 @@ export default function AdminDashboard() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
         setListOfComments(response.data);
       });
   }, []);
@@ -143,9 +143,9 @@ export default function AdminDashboard() {
                 onClick={() => {
                   navigate(`/posts/${value.PostId}`);
                 }}
-                primary={`${value.username} - ${formatDate(
+                primary={`${value.User.username} - ${formatDate(
                   value.createdAt
-                )} - ${value.message} `}
+                )}`}
                 secondary={value.message}
               ></ListItemText>
             </ListItem>
