@@ -5,21 +5,26 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/auth-context";
 import toast, { Toaster } from "react-hot-toast";
+import { TextField } from "formik-mui";
 
 // MUI
-import CssBaseline from "@mui/material/CssBaseline";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import { TextField } from "formik-mui";
+import {
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  Container,
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Link,
+  CardMedia,
+  CssBaseline,
+} from "@mui/material";
 
 // Style
 import MainLogo from "../icon-above-font.png";
-import CardMedia from "@mui/material/CardMedia";
 
 const theme = createTheme();
 
@@ -108,18 +113,16 @@ function Login() {
                   fullWidth
                   name="password"
                   label="Mot de passe"
-                  type="password"
+                  type={passwordShown ? "text" : "password"}
                   id="password"
                   autoComplete="current-password"
                 />
-                <div>
-                  <input
-                    type="checkbox"
-                    name="showPassword"
-                    onChange={togglePassword}
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch onChange={togglePassword} />}
+                    label="Montrer le mot de passe"
                   />
-                  <label htmlFor="showPassword">Montrer le mot de passe</label>
-                </div>
+                </FormGroup>
                 <Button
                   type="submit"
                   fullWidth

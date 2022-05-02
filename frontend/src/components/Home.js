@@ -15,7 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
 // Utilities
-import { formatDate, getInitialsFromName } from "../services/utilities";
+import { formatDate } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
 
 // MUI
@@ -49,27 +49,36 @@ function Home() {
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
-
   const navigate = useNavigate();
   const notifyLike = () => toast("Vous aimez cette publication !");
   const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
+      console.log("no token in storage");
       navigate("/login");
+      return;
+    }
+    if (!authState) {
+      console.log("no authState");
+      sessionStorage.removeItem("token");
+      navigate("/login");
+      return;
     } else {
       axios
         .get("http://localhost:3006/posts", {
           headers: { token: sessionStorage.getItem("token") },
         })
         .then((response) => {
-          console.log(response);
           setListOfPosts(response.data.listOfPosts);
           setLikedPosts(
             response.data.likedPosts.map((like) => {
               return like.PostId;
             })
           );
+        })
+        .catch((err) => {
+          console.log(err);
         });
     }
   }, []);
@@ -83,31 +92,39 @@ function Home() {
       )
       .then((response) => {
         console.log(response.data);
-        setListOfPosts(
-          listOfPosts.map((post) => {
-            if (post.id === postId) {
-              if (response.data.liked) {
-                notifyLike();
-                post.Likes.push(0);
-                return post;
-              } else {
-                const likesArray = post.Likes;
-                likesArray.pop();
-                notifyUnlike();
-                return { ...post, Likes: likesArray };
-              }
-            } else {
+        // render the new list of posts
+        const modifiedPosts = listOfPosts.map((post) => {
+          // if the postId matches the postId of the post we just liked
+          if (post.id === postId) {
+            if (response.data.liked) {
+              notifyLike();
+              // push the postId to the Likes array
+              post.Likes.push(0);
+              // return the post with the new Likes array
               return post;
+            } else {
+              const likesArray = post.Likes;
+              // remove the last element of the Likes array
+              likesArray.pop();
+              notifyUnlike();
+              // and return the post with the new array
+              return { ...post, Likes: likesArray };
             }
-          })
-        );
+          } else {
+            return post;
+          }
+        });
+        setListOfPosts(modifiedPosts);
+        // if the likedPosts array contains the postId we just liked
         if (likedPosts.includes(postId)) {
           setLikedPosts(
+            // filter the likedPosts array to remove the postId
             likedPosts.filter((id) => {
               return id !== postId;
             })
           );
         } else {
+          // else add the postId to the likedPosts array and set the state
           setLikedPosts([...likedPosts, postId]);
         }
       });
@@ -133,174 +150,184 @@ function Home() {
       });
   };
 
+  const isNotAuthor = (post) => {
+    if (post.UserId === authState.id) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   return (
     <div className="Home">
-      {window.innerWidth < 768 ? <LateralNav /> : <TopNav />}
-      {listOfPosts.map((value, key) => {
-        return (
-          <Container
-            key={value.id}
-            sx={{ justifyContent: "center", marginTop: 10 }}
-          >
-            <Card sx={{ maxWidth: 768, m: 2 }}>
-              <CardHeader
-                avatar={
-                  <>
-                    <Tooltip title={value.username}>
-                      <Link to={`/profile/${value.UserId}`}>
-                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                          {getInitialsFromName(value.username)}
-                        </Avatar>
-                      </Link>
-                    </Tooltip>
-                  </>
-                }
-                action={
-                  <>
-                    {!value.isFlagged ? (
-                      <>
-                        <IconButton
-                          aria-label="flag"
-                          onClick={() => {
-                            reportPost(value.id);
-                          }}
-                        >
-                          <Tooltip title="Signaler">
-                            <ReportIcon />
-                          </Tooltip>
-                        </IconButton>
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                }
-                title={value.title}
-                subheader={formatDate(value.createdAt)}
-              />
-              <Box
-                sx={{
-                  "&:hover": {
-                    cursor: "pointer",
-                  },
-                }}
-                onClick={() => {
-                  navigate(`/posts/${value.id}`);
-                }}
-              >
-                {value.imageUrl ? (
-                  <CardMedia
-                    component="img"
-                    height="400"
-                    image={value.imageUrl}
-                  />
-                ) : (
-                  <Divider />
-                )}
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    {value.message}
-                  </Typography>
-                </CardContent>
-              </Box>
-              <Divider variant="middle" />
-
-              <CardActions
-                disableSpacing
-                sx={{ justifyContent: "space-evenly" }}
-              >
-                <Button
-                  sx={{ width: 1 }}
-                  aria-label="add to favorites"
-                  onClick={() => {
-                    likePost(value.id);
+      {/* {window.innerWidth < 768 ? <LateralNav /> : <TopNav />} */}
+      <TopNav />
+      {listOfPosts &&
+        listOfPosts.map((value, key) => {
+          return (
+            <Container
+              key={value.id}
+              sx={{ justifyContent: "center", marginTop: 10 }}
+            >
+              <Card sx={{ maxWidth: 768, m: 2 }}>
+                <CardHeader
+                  avatar={
+                    <>
+                      <Tooltip title={value.User.username}>
+                        <Link to={`/profile/${value.UserId}`}>
+                          <Avatar src={value.User.avatar || "../icon.svg"} />
+                        </Link>
+                      </Tooltip>
+                    </>
+                  }
+                  action={
+                    <>
+                      {!value.isFlagged && isNotAuthor(value) && (
+                        <>
+                          <IconButton
+                            aria-label="flag"
+                            onClick={() => {
+                              reportPost(value.id);
+                            }}
+                          >
+                            <Tooltip title="Signaler">
+                              <ReportIcon />
+                            </Tooltip>
+                          </IconButton>
+                        </>
+                      )}
+                    </>
+                  }
+                  title={value.title}
+                  subheader={formatDate(value.createdAt)}
+                />
+                <Box
+                  sx={{
+                    "&:hover": {
+                      cursor: "pointer",
+                    },
                   }}
-                >
-                  <SvgIcon
-                    sx={{ fontSize: 50, color: red[500] }}
-                    component={
-                      likedPosts.includes(value.id)
-                        ? FavoriteIcon
-                        : FavoriteBorderIcon
-                    }
-                  />
-                  <div>{value.Likes.length}</div>
-                </Button>
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <Button
-                  sx={{ width: 1 }}
                   onClick={() => {
                     navigate(`/posts/${value.id}`);
                   }}
                 >
-                  <ZoomOutMapIcon sx={{ fontSize: 50 }} />
-                </Button>
-              </CardActions>
-              <Accordion TransitionProps={{ unmountOnExit: true }}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
+                  {value.imageUrl ? (
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      image={value.imageUrl}
+                    />
+                  ) : (
+                    <Divider />
+                  )}
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      {value.message}
+                    </Typography>
+                  </CardContent>
+                </Box>
+                <Divider variant="middle" />
+
+                <CardActions
+                  disableSpacing
+                  sx={{ justifyContent: "space-evenly" }}
                 >
-                  <Typography align="center">
-                    {value.Comments.length} commentaires
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <List sx={{ mb: 2, maxHeight: 380, overflow: "auto" }}>
-                    {value.Comments.map((comment) => {
-                      return (
-                        <ListItem key={comment.id}>
-                          <ListItemAvatar>
-                            <Avatar
-                              sx={{ bgcolor: red[500] }}
-                              aria-label="recipe"
-                            >
-                              {getInitialsFromName(comment.username)}
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={comment.message}
-                            secondary={
-                              <>
-                                <Typography
-                                  component="span"
-                                  variant="body2"
-                                  color="textPrimary"
+                  <Button
+                    sx={{ width: 1 }}
+                    aria-label="add to favorites"
+                    onClick={() => {
+                      likePost(value.id);
+                    }}
+                  >
+                    <SvgIcon
+                      sx={{ fontSize: 50, color: red[500] }}
+                      component={
+                        likedPosts.includes(value.id)
+                          ? FavoriteIcon
+                          : FavoriteBorderIcon
+                      }
+                    />
+                    <div>{value.Likes && value.Likes.length}</div>
+                  </Button>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <Button
+                    sx={{ width: 1 }}
+                    onClick={() => {
+                      navigate(`/posts/${value.id}`);
+                    }}
+                  >
+                    <ZoomOutMapIcon sx={{ fontSize: 50 }} />
+                  </Button>
+                </CardActions>
+                <Accordion TransitionProps={{ unmountOnExit: true }}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography align="center">
+                      {value.Comments && value.Comments.length} commentaires
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List sx={{ mb: 2, maxHeight: 380, overflow: "auto" }}>
+                      {value.Comments &&
+                        value.Comments.map((comment) => {
+                          return (
+                            <ListItem key={comment.id}>
+                              <ListItemAvatar>
+                                <Avatar
+                                  sx={{ bgcolor: red[500] }}
+                                  aria-label="user avatar"
                                 >
-                                  {comment.username}
-                                </Typography>
-                                {" — "}
-                                <Typography
-                                  component="span"
-                                  variant="body2"
-                                  color="textPrimary"
-                                >
-                                  {formatDate(comment.createdAt)}
-                                </Typography>
-                              </>
-                            }
-                          />
-                        </ListItem>
-                      );
-                    })}
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                          You
-                        </Avatar>
-                      </ListItemAvatar>
-                      <Button onClick={() => navigate(`/posts/${value.id}`)}>
-                        Participer à la conversation !
-                      </Button>
-                    </ListItem>
-                  </List>
-                </AccordionDetails>
-              </Accordion>
-            </Card>
-          </Container>
-        );
-      })}
+                                  {/* {getInitialsFromName(comment.username)} */}
+                                </Avatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={comment.message}
+                                secondary={
+                                  <>
+                                    <Typography
+                                      component="span"
+                                      variant="body2"
+                                      color="textPrimary"
+                                    >
+                                      {comment.username}
+                                    </Typography>
+                                    {" — "}
+                                    <Typography
+                                      component="span"
+                                      variant="body2"
+                                      color="textPrimary"
+                                    >
+                                      {formatDate(comment.createdAt)}
+                                    </Typography>
+                                  </>
+                                }
+                              />
+                            </ListItem>
+                          );
+                        })}
+                      <ListItem>
+                        <ListItemAvatar>
+                          <Avatar
+                            sx={{ bgcolor: red[500] }}
+                            aria-label="recipe"
+                          >
+                            You
+                          </Avatar>
+                        </ListItemAvatar>
+                        <Button onClick={() => navigate(`/posts/${value.id}`)}>
+                          Participer à la conversation
+                        </Button>
+                      </ListItem>
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              </Card>
+            </Container>
+          );
+        })}
       <Toaster
         position="bottom-center"
         toastOptions={{

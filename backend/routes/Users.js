@@ -69,7 +69,7 @@ router.get("/auth", validateToken, (req, res) => {
   res.json(req.user);
 });
 
-router.get("/profile/:id", async (req, res) => {
+router.get("/profile/:id", validateToken, async (req, res) => {
   try {
     const user = await Users.findOne({
       where: { id: req.params.id },
@@ -102,21 +102,25 @@ router.put("/password", validateToken, async (req, res) => {
 });
 
 router.put("/avatar", validateToken, multer, async (req, res) => {
-  // delete the old avatar of the user
-  const user = await Users.findOne({
-    where: { username: req.user.username },
-  });
-  if (user.avatar) {
-    fs.unlink(`images/${user.avatar}`, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  }
-  const avatar = `/images/${req.file.filename}`;
+  const avatar = `${req.protocol}://${req.get("host")}/images/${
+    req.file.filename
+  }`;
   Users.update({ avatar: avatar }, { where: { username: req.user.username } });
   res.status(200).send("Avatar modifié avec succès.");
   res.send(avatar);
+});
+
+// router to get a user's avatar from the database with his id
+router.get("/avatar/:id", async (req, res) => {
+  try {
+    const user = await Users.findOne({
+      where: { id: req.params.id },
+      attributes: { avatar },
+    });
+    res.send(user.avatar);
+  } catch (error) {
+    res.status(400).send("User not found");
+  }
 });
 
 router.delete("/delete", validateToken, async (req, res) => {

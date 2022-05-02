@@ -23,7 +23,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const [listOfPosts, setListOfPosts] = useState([]);
   const { authState } = useContext(AuthContext);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
@@ -33,16 +33,18 @@ export default function Profile() {
       })
       .then((res) => {
         setUsername(res.data.username);
-        axios
-          .get(`http://localhost:3006${res.data.avatar}`, {
-            headers: { token: sessionStorage.getItem("token") },
-          })
-          .then((res) => {
-            setAvatarPreview(res.config.url);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        if (res.data.avatar) {
+          axios
+            .get(`${res.data.avatar}`, {
+              headers: { token: sessionStorage.getItem("token") },
+            })
+            .then((res) => {
+              setAvatarUrl(res.config.url);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -52,6 +54,10 @@ export default function Profile() {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
+        if (res.data.error) {
+          throw new Error(res.data.error);
+        }
+
         setListOfPosts(res.data);
       })
       .catch((err) => {
@@ -82,11 +88,11 @@ export default function Profile() {
           })
           .then((res) => {
             axios
-              .get(`http://localhost:3006${res.data.avatar}`, {
+              .get(`${res.data.avatar}`, {
                 headers: { token: sessionStorage.getItem("token") },
               })
               .then((res) => {
-                setAvatarPreview(res.config.url);
+                setAvatarUrl(res.config.url);
               })
               .catch((err) => {
                 console.log(err);
@@ -101,14 +107,14 @@ export default function Profile() {
       });
   };
 
-  // possibilité de factoriser le code pour setAvatarPreview:
-  /*   function setAvatar(res, setAvatarPreview) {
+  // possibilité de factoriser le code pour setAvatarUrl:
+  /*   function setAvatar(res, setAvatarUrl) {
     axios
       .get(`http://localhost:3006${res.data.avatar}`, {
         headers: { token: sessionStorage.getItem("token") },
       })
       .then((res) => {
-        setAvatarPreview(res.config.url);
+        setAvatarUrl(res.config.url);
       })
       .catch((err) => {
         console.log(err);
@@ -132,7 +138,7 @@ export default function Profile() {
                 <CardMedia component="div">
                   <Avatar
                     size="md"
-                    src={avatarPreview}
+                    src={avatarUrl}
                     sx={{ width: 200, height: 200 }}
                   />
                 </CardMedia>
@@ -165,29 +171,30 @@ export default function Profile() {
             </Box>
           </Grid>
           <Grid item xs={8}>
-            {listOfPosts.map((value, key) => {
-              return (
-                <React.Fragment key={key}>
-                  <Divider />
-                  <ListItem
-                    sx={{
-                      "&:hover": {
-                        cursor: "pointer",
-                        backgroundColor: "#f5f5f5",
-                      },
-                    }}
-                    onClick={() => {
-                      navigate(`/posts/${value.id}`);
-                    }}
-                  >
-                    <ListItemText
-                      primary={value.title}
-                      secondary={value.message}
-                    ></ListItemText>
-                  </ListItem>
-                </React.Fragment>
-              );
-            })}
+            {listOfPosts &&
+              listOfPosts.map((value, key) => {
+                return (
+                  <React.Fragment key={key}>
+                    <Divider />
+                    <ListItem
+                      sx={{
+                        "&:hover": {
+                          cursor: "pointer",
+                          backgroundColor: "#f5f5f5",
+                        },
+                      }}
+                      onClick={() => {
+                        navigate(`/posts/${value.id}`);
+                      }}
+                    >
+                      <ListItemText
+                        primary={value.title}
+                        secondary={value.message}
+                      ></ListItemText>
+                    </ListItem>
+                  </React.Fragment>
+                );
+              })}
           </Grid>
         </Grid>
       </Box>

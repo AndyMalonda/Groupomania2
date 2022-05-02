@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Posts, Likes, Comments } = require("../models");
+const { Posts, Likes, Users, Comments } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 const { validateAdmin } = require("../middlewares/admin");
 
@@ -12,29 +12,30 @@ router.get("/", validateToken, async (req, res) => {
     // order by date de création du post (desc), includes les likes et les comments
     {
       order: [["createdAt", "DESC"]],
-      include: [
-        {
-          model: Likes,
-          as: "Likes",
-        },
-        {
-          model: Comments,
-          as: "Comments",
-        },
-      ],
+      include: [{ model: Users }, { model: Likes }, { model: Comments }],
     }
   );
   // on cherche les posts likés par le user
   const likedPosts = await Likes.findAll({ where: { UserId: req.user.id } });
   // on renvoie l'objet
-  res.json({ listOfPosts: listOfPosts, likedPosts: likedPosts });
+  res.json({
+    listOfPosts: listOfPosts,
+    likedPosts: likedPosts,
+  });
 });
 
 router.get("/:id", validateToken, async (req, res) => {
   // on récupère la data dans les params de la req
   const id = req.params.id;
   // on cherche la primary key correspondante dans l'array Posts
-  const post = await Posts.findByPk(id);
+  const post = await Posts.findOne({
+    where: { id: id },
+    include: [
+      { model: Users, attributes: ["id", "username", "avatar"] },
+      { model: Likes, attributes: ["id", "UserId"] },
+      { model: Comments },
+    ],
+  });
   // on renvoie
   res.json(post);
 });
@@ -69,10 +70,8 @@ router.post("/create", validateToken, async (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;
-  const username = req.user.username;
-  const userId = req.user.id;
-  post.username = username;
-  post.UserId = userId;
+  // on attribue le UserId
+  post.UserId = req.user.id;
   // on crée l'entrée dans l'array Posts
   await Posts.create(post);
   // on renvoie
@@ -82,10 +81,8 @@ router.post("/", validateToken, async (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;
-  const username = req.user.username;
-  const userId = req.user.id;
-  post.username = username;
-  post.UserId = userId;
+  post.username = req.user.username;
+  post.UserId = req.user.id;
   // on crée l'entrée dans l'array Posts
   await Posts.create(post);
   // on renvoie
@@ -95,10 +92,8 @@ router.post("/", validateToken, async (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data du body de la req
   const post = req.body;
-  const username = req.user.username;
-  const userId = req.user.id;
-  post.username = username;
-  post.UserId = userId;
+  post.username = req.user.username;
+  post.UserId = req.user.id;
   // on crée l'entrée dans l'array Posts
   await Posts.create(post);
   // on renvoie
