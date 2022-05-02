@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const { Comments } = require("../models");
+const { Comments, Users } = require("../models");
 const { validateToken } = require("../middlewares/auth");
 
 router.get("/:postId", validateToken, async (req, res) => {
   // on récupère la data dans la req
   const postId = req.params.postId;
   // on récupère tous les comments correspondant au post dans l'array Comments
-  const comments = await Comments.findAll({ where: { PostId: postId } });
+  const comments = await Comments.findAll({
+    where: { PostId: postId },
+    include: [Users],
+  });
   // on les renvoie en res
   res.json(comments);
 });
@@ -15,28 +18,22 @@ router.get("/:postId", validateToken, async (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   // on récupère la data dans la req
   const comment = req.body;
-  const username = req.user.username;
-  // on attribue l'auteur du commentaire directement à ce dernier
-  comment.username = username;
+  // on récupère le username et l'id de l'utilisateur
   comment.isFlaged = false;
+  // on attribue le UserId
+  comment.UserId = req.user.id;
+  // on attribue la date de création
+  comment.createdAt = new Date();
+  // on récupère les autres informations du users
+  comment.User = await Users.findOne({
+    where: { id: comment.UserId },
+    attributes: ["username", "avatar"],
+  });
   // on crée la ligne dans l'array Comments
   await Comments.create(comment);
   // on renvoie
   res.json(comment);
 });
-
-// router.post("/", validateToken, async (req, res) => {
-//   try {
-//     const comment = await Comments.create({
-//       message: req.body.message,
-//       PostId: req.body.PostId,
-//       UserId: req.body.UserId,
-//     });
-//     res.send(comment);
-//   } catch (error) {
-//     res.status(500).send(error);
-//   }
-// });
 
 router.delete("/:commentId", validateToken, async (req, res) => {
   // on récupère la data

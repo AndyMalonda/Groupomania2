@@ -115,7 +115,7 @@ router.get("/avatar/:id", async (req, res) => {
   try {
     const user = await Users.findOne({
       where: { id: req.params.id },
-      attributes: { exclude: ["password"] },
+      attributes: { avatar },
     });
     res.send(user.avatar);
   } catch (error) {

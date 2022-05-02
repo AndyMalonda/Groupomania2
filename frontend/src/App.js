@@ -52,7 +52,7 @@ function App() {
           });
         }
       });
-  }, [authState]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ authState, setAuthState }}>

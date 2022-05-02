@@ -13,10 +13,9 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-// import defaultAvatar from "../default.png";
 
 // Utilities
-import { formatDate, getInitialsFromName } from "../services/utilities";
+import { formatDate } from "../services/utilities";
 import { AuthContext } from "../contexts/auth-context";
 
 // MUI
@@ -72,10 +71,8 @@ function Home() {
         })
         .then((response) => {
           setListOfPosts(response.data.listOfPosts);
-
-          if (response.data.likedPosts) return;
           setLikedPosts(
-            likedPosts.map((like) => {
+            response.data.likedPosts.map((like) => {
               return like.PostId;
             })
           );
@@ -99,7 +96,7 @@ function Home() {
         const modifiedPosts = listOfPosts.map((post) => {
           // if the postId matches the postId of the post we just liked
           if (post.id === postId) {
-            if (post.liked) {
+            if (response.data.liked) {
               notifyLike();
               // push the postId to the Likes array
               post.Likes.push(0);
@@ -152,20 +149,6 @@ function Home() {
           });
       });
   };
-
-  // const getImageUrl = (userId) => {
-  //   axios
-  //     .get(`http://localhost:3006/users/avatar/${userId}`, {
-  //       headers: { token: sessionStorage.getItem("token") },
-  //     })
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       setAvatarUrl(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const isNotAuthor = (post) => {
     if (post.UserId === authState.id) {
@@ -296,7 +279,7 @@ function Home() {
                               <ListItemAvatar>
                                 <Avatar
                                   sx={{ bgcolor: red[500] }}
-                                  aria-label="recipe"
+                                  aria-label="user avatar"
                                 >
                                   {/* {getInitialsFromName(comment.username)} */}
                                 </Avatar>
