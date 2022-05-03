@@ -118,10 +118,8 @@ router.get("/read/flagged", validateAdmin, async (req, res) => {
 // flag a post
 router.put("/flag/:postId", validateToken, async (req, res) => {
   const postId = req.params.postId;
-  console.log(postId);
   const post = await Posts.findByPk(postId);
   post.isFlagged = true;
-  console.log(post);
   await post.save();
   res.json("Publication signalée");
 });

@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import LateralNav from "./LateralNav";
 import TopNav from "./TopNav";
 
 // Style
@@ -12,7 +11,8 @@ import ReportIcon from "@mui/icons-material/Report";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+import CommentIcon from "@mui/icons-material/Comment";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // Utilities
 import { formatDate } from "../services/utilities";
@@ -34,15 +34,12 @@ import {
   Container,
   Button,
   Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
   Accordion,
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
 import { red } from "@mui/material/colors";
+import Comments from "./Comments";
 
 // MUI
 function Home() {
@@ -50,8 +47,6 @@ function Home() {
   const [likedPosts, setLikedPosts] = useState([]);
   const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
-  const notifyLike = () => toast("Vous aimez cette publication !");
-  const notifyUnlike = () => toast("Vous n'aimez plus cette publication !");
 
   useEffect(() => {
     if (!sessionStorage.getItem("token")) {
@@ -97,7 +92,7 @@ function Home() {
           // if the postId matches the postId of the post we just liked
           if (post.id === postId) {
             if (response.data.liked) {
-              notifyLike();
+              toast.success("Vous aimez cette publication !");
               // push the postId to the Likes array
               post.Likes.push(0);
               // return the post with the new Likes array
@@ -106,7 +101,7 @@ function Home() {
               const likesArray = post.Likes;
               // remove the last element of the Likes array
               likesArray.pop();
-              notifyUnlike();
+              toast.success("Vous n'aimez plus cette publication !");
               // and return the post with the new array
               return { ...post, Likes: likesArray };
             }
@@ -234,7 +229,7 @@ function Home() {
                 >
                   <Button
                     sx={{ width: 1 }}
-                    aria-label="add to favorites"
+                    aria-label="Like post"
                     onClick={() => {
                       likePost(value.id);
                     }}
@@ -256,72 +251,21 @@ function Home() {
                       navigate(`/posts/${value.id}`);
                     }}
                   >
-                    <ZoomOutMapIcon sx={{ fontSize: 50 }} />
+                    <CommentIcon sx={{ fontSize: 50 }} />
+                    <div>{value.Comments && value.Comments.length}</div>
                   </Button>
                 </CardActions>
+
                 <Accordion TransitionProps={{ unmountOnExit: true }}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
-                    <Typography align="center">
-                      {value.Comments && value.Comments.length} commentaires
-                    </Typography>
+                    <Typography>Commentaires</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <List sx={{ mb: 2, maxHeight: 380, overflow: "auto" }}>
-                      {value.Comments &&
-                        value.Comments.map((comment) => {
-                          return (
-                            <ListItem key={comment.id}>
-                              <ListItemAvatar>
-                                <Avatar
-                                  sx={{ bgcolor: red[500] }}
-                                  aria-label="user avatar"
-                                >
-                                  {/* {getInitialsFromName(comment.username)} */}
-                                </Avatar>
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={comment.message}
-                                secondary={
-                                  <>
-                                    <Typography
-                                      component="span"
-                                      variant="body2"
-                                      color="textPrimary"
-                                    >
-                                      {comment.username}
-                                    </Typography>
-                                    {" — "}
-                                    <Typography
-                                      component="span"
-                                      variant="body2"
-                                      color="textPrimary"
-                                    >
-                                      {formatDate(comment.createdAt)}
-                                    </Typography>
-                                  </>
-                                }
-                              />
-                            </ListItem>
-                          );
-                        })}
-                      <ListItem>
-                        <ListItemAvatar>
-                          <Avatar
-                            sx={{ bgcolor: red[500] }}
-                            aria-label="recipe"
-                          >
-                            You
-                          </Avatar>
-                        </ListItemAvatar>
-                        <Button onClick={() => navigate(`/posts/${value.id}`)}>
-                          Participer à la conversation
-                        </Button>
-                      </ListItem>
-                    </List>
+                    <Comments postId={value.id} />
                   </AccordionDetails>
                 </Accordion>
               </Card>

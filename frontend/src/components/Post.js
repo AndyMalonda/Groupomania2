@@ -61,23 +61,17 @@ function Post() {
   const addComment = () => {
     axios
       .post(
-        "http://localhost:3006/comments",
-        {
-          message: newComment,
-          PostId: id,
-        },
+        `http://localhost:3006/comments`,
+        { message: newComment, PostId: id },
         { headers: { token: sessionStorage.getItem("token") } }
       )
       .then((response) => {
-        try {
-          console.log(response.data);
-          const commentToAdd = response.data;
-          setComments([...comments, commentToAdd]);
-          setNewComment("");
-          toast.success("Commentaire posté !");
-        } catch (error) {
-          console.log(error);
-        }
+        setComments(comments.concat(response.data));
+        setNewComment("");
+        toast.success("Votre commentaire a été ajouté !");
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 

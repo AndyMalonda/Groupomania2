@@ -1,7 +1,22 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
+import {
+  IconButton,
+  Tooltip,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import toast from "react-hot-toast";
 
-export default function FlagDialog() {
-  const [open, setOpen] = React.useState(false);
+import ReportIcon from "@mui/icons-material/Report";
+
+export default function FlagDialog(props) {
+  const [open, setOpen] = useState(false);
+  const postId = props.postId;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -11,13 +26,27 @@ export default function FlagDialog() {
     setOpen(false);
   };
 
+  const reportPost = () => {
+    axios
+      .put(`http://localhost:3006/posts/flag/${postId}`, {
+        headers: { token: sessionStorage.getItem("token") },
+      })
+      .then((response) => {
+        console.log(response.data);
+        toast("Publication signalée !");
+        handleClose();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
-    <div>
+    <>
       <IconButton
         aria-label="flag"
         onClick={() => {
           handleClickOpen();
-          log(value.id);
         }}
       >
         <Tooltip title="Signaler">
@@ -42,18 +71,11 @@ export default function FlagDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Annuler</Button>
-          <Button
-            onClick={() => {
-              reportPost(value.id);
-              handleClose();
-              log(value.id);
-            }}
-            autoFocus
-          >
+          <Button onClick={reportPost} autoFocus>
             Confirmer
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }

@@ -17,9 +17,9 @@ export const formatDate = (dateString) => {
 // };
 
 // calculate the hours between two dates
-export const getHoursSincePost = (date) => {
+export const getHoursSincePost = (dateString) => {
   const now = new Date();
-  const then = new Date(date);
+  const then = new Date(dateString);
   const diff = now - then;
   const diffHours = Math.floor(diff / 3600000);
   if (diffHours < 1) {
@@ -31,14 +31,18 @@ export const getHoursSincePost = (date) => {
     } else if (diffMinutes < 60) {
       return `Il y a ${Math.floor(diffMinutes)} minutes`;
     } else {
-      return formatDate(date);
+      return formatDate(dateString);
     }
   } else if (diffHours === 1) {
     return `Il y a 1 heure`;
   } else if (diffHours < 24) {
     return `Il y a ${Math.floor(diffHours)} heures`;
+  } else if (diffHours < 48) {
+    return "Hier";
+  } else if (diffHours < 72) {
+    return "Avant-hier";
   } else {
-    return formatDate(date);
+    return formatDate(dateString);
   }
 };
 
