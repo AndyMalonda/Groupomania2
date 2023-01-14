@@ -44,8 +44,13 @@ function Login() {
       if (response.data.error) {
         toast.error(response.data.error);
       } else {
-        sessionStorage.setItem("token", response.data.token);
+        const dataToStore = {
+          token: response.data.token,
+          id: response.data.id,
+        };
+        sessionStorage.setItem("groupomaniaAndy", JSON.stringify(dataToStore));
         setAuthState(true);
+        // toast.success(response.data);
         navigate("/");
       }
     } catch (error) {

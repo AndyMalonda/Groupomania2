@@ -58,6 +58,7 @@ router.post("/login", async (req, res) => {
           id: user.id,
           isAdmin: user.isAdmin,
         });
+        res.status(200).send("Connexion réussie");
       } else {
         res.status(400).send("Mot de passe incorrect");
       }

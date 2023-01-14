@@ -125,7 +125,7 @@ router.put("/flag/:postId", validateToken, async (req, res) => {
 });
 
 // unflag a post
-router.put("/unflag/:postId", validateToken, async (req, res) => {
+router.put("/unflag/:postId", validateAdmin, async (req, res) => {
   const postId = req.params.postId;
   const post = await Posts.findByPk(postId);
   post.isFlagged = false;

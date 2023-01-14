@@ -25,10 +25,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     axios
       .get("http://localhost:3006/posts/read/flagged", {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
-        console.log(response);
         setListOfPosts(response.data);
       });
   }, []);
@@ -36,7 +37,9 @@ export default function AdminDashboard() {
   useEffect(() => {
     axios
       .get("http://localhost:3006/comments/read/flagged", {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         console.log(response.data);
@@ -47,7 +50,9 @@ export default function AdminDashboard() {
   const deleteComment = (id) => {
     axios
       .delete(`http://localhost:3006/comments/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then(() => {
         toast.success("Commentaire supprimé !");
@@ -64,10 +69,13 @@ export default function AdminDashboard() {
       .put(
         `http://localhost:3006/comments/unflag/${commentId}`,
         { commentId: commentId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
-        console.log(response.data);
         toast.success("Commentaire désignalé !");
         setListOfComments(
           listOfComments.map((val) => {

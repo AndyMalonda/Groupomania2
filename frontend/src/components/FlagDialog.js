@@ -29,7 +29,9 @@ export default function FlagDialog(props) {
   const reportPost = () => {
     axios
       .put(`http://localhost:3006/posts/flag/${postId}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         console.log(response.data);

@@ -10,12 +10,16 @@ import {
   List,
   ListItem,
   ListItemText,
+  Input,
+  IconButton,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { BackButton } from "./BackButton";
 import { AuthContext } from "../contexts/auth-context";
+
+import SendIcon from "@mui/icons-material/Send";
 
 export default function Profile() {
   const { id } = useParams();
@@ -29,14 +33,19 @@ export default function Profile() {
   useEffect(() => {
     axios
       .get(`http://localhost:3006/users/profile/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((res) => {
         setUsername(res.data.username);
         if (res.data.avatar) {
           axios
             .get(`${res.data.avatar}`, {
-              headers: { token: sessionStorage.getItem("token") },
+              headers: {
+                token: JSON.parse(sessionStorage.getItem("groupomaniaAndy"))
+                  .token,
+              },
             })
             .then((res) => {
               setAvatarUrl(res.config.url);
@@ -51,7 +60,9 @@ export default function Profile() {
       });
     axios
       .get(`http://localhost:3006/posts/byuserId/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((res) => {
         if (res.data.error) {
@@ -79,17 +90,25 @@ export default function Profile() {
     formData.append("image", selectedFile);
     axios
       .put(`http://localhost:3006/users/avatar`, formData, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((res) => {
         axios
           .get(`http://localhost:3006/users/profile/${id}`, {
-            headers: { token: sessionStorage.getItem("token") },
+            headers: {
+              token: JSON.parse(sessionStorage.getItem("groupomaniaAndy"))
+                .token,
+            },
           })
           .then((res) => {
             axios
               .get(`${res.data.avatar}`, {
-                headers: { token: sessionStorage.getItem("token") },
+                headers: {
+                  token: JSON.parse(sessionStorage.getItem("groupomaniaAndy"))
+                    .token,
+                },
               })
               .then((res) => {
                 setAvatarUrl(res.config.url);
@@ -111,7 +130,7 @@ export default function Profile() {
   /*   function setAvatar(res, setAvatarUrl) {
     axios
       .get(`http://localhost:3006${res.data.avatar}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: { token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token },
       })
       .then((res) => {
         setAvatarUrl(res.config.url);
@@ -138,21 +157,33 @@ export default function Profile() {
                 <CardMedia component="div">
                   <Avatar
                     size="md"
-                    src={avatarUrl}
+                    src={
+                      selectedFile
+                        ? URL.createObjectURL(selectedFile)
+                        : avatarUrl
+                    }
                     sx={{ width: 200, height: 200 }}
                   />
                 </CardMedia>
                 {authState.username === username && (
                   <List>
                     <ListItem>
-                      <Button>
-                        <form
-                          onSubmit={handleSubmit}
-                          encType="multipart/form-data"
-                        >
-                          <input type="file" onChange={changeHandler} />
-                          <input type="submit" value="Upload File" />
-                        </form>
+                      <Button
+                        component="form"
+                        onSubmit={handleSubmit}
+                        encType="multipart/form-data"
+                      >
+                        <Input
+                          component="input"
+                          type="file"
+                          onChange={changeHandler}
+                        />
+
+                        <IconButton type="submit">
+                          <SendIcon />
+                        </IconButton>
+
+                        {/* <Input component="input" type="submit" value="Ok" /> */}
                       </Button>
                     </ListItem>
                     <ListItem>

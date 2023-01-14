@@ -39,7 +39,9 @@ export default function ChangePassword() {
         "http://localhost:3006/users/password",
         data,
         {
-          headers: { token: sessionStorage.getItem("token") },
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
         }
       );
       if (response.data.error) {

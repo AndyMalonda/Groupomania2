@@ -29,7 +29,9 @@ export default function DeleteAccount() {
       const response = await axios.delete(
         "http://localhost:3006/users/delete",
         {
-          headers: { token: sessionStorage.getItem("token") },
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
           data: { password: data.password },
         }
       );

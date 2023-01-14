@@ -13,33 +13,41 @@ import NavLogo from "../navlogo.png";
 import NavLogoSmall from "../icon.png";
 import axios from "axios";
 
-export default function AccountMenu() {
+export default function TopNav() {
   const { setAuthState } = useContext(AuthContext);
   const navigate = useNavigate("");
-  const id = useContext(AuthContext).authState.id;
   const isAdmin = useContext(AuthContext).authState.isAdmin;
   const [avatarUrl, setAvatarUrl] = useState("");
   const [username, setUsername] = useState("");
+  const [id, setId] = useState(0);
 
   useEffect(() => {
-    if (!(id > 0)) {
+    if (!sessionStorage.getItem("groupomaniaAndy")) {
       return;
     }
+    const storeData = JSON.parse(sessionStorage.getItem("groupomaniaAndy"));
+    console.log(storeData);
+    setId(storeData.id);
+    const token = storeData.token;
     axios
-      .get(`http://localhost:3006/users/profile/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+      .get(`http://localhost:3006/users/profile/${storeData.id}`, {
+        headers: { token },
       })
       .then((res) => {
         // if (!res.data) {
         //   return;
         // }
+        console.log(res);
+        console.log(id);
         setUsername(res.data.username);
         if (!res.data.avatar) {
           setAvatarUrl("");
         } else {
           axios
             .get(`${res.data.avatar}`, {
-              headers: { token: sessionStorage.getItem("token") },
+              headers: {
+                token,
+              },
             })
             .then((res) => {
               if (res.data) {
@@ -54,7 +62,7 @@ export default function AccountMenu() {
       .catch((err) => {
         console.log(err);
       });
-  }, [id]);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -92,6 +100,7 @@ export default function AccountMenu() {
           sx={{ width: 1, height: 1 }}
         >
           <Tooltip title="Accueil">
+            {/* media queries addEventListener */}
             {window.innerWidth > 768 ? (
               <CardMedia
                 component="img"

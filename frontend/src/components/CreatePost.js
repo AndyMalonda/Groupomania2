@@ -23,7 +23,7 @@ function CreatePost() {
   const notify = () => toast("Votre post a été publié !");
 
   useEffect(() => {
-    if (!sessionStorage.getItem("token")) {
+    if (!JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token) {
       navigate("/");
     }
   });
@@ -34,7 +34,9 @@ function CreatePost() {
         "http://localhost:3006/posts/create",
         data,
         {
-          headers: { token: sessionStorage.getItem("token") },
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
         }
       );
       if (response.data.error) {

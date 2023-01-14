@@ -36,9 +36,14 @@ function App() {
   });
 
   useEffect(() => {
+    if (!sessionStorage.getItem("groupomaniaAndy")) {
+      return;
+    }
     axios
       .get("http://localhost:3006/users/auth", {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         if (response.data.error) {

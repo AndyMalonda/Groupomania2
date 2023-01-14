@@ -12,7 +12,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CommentIcon from "@mui/icons-material/Comment";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 // Utilities
 import { formatDate } from "../services/utilities";
@@ -43,13 +43,13 @@ import Comments from "./Comments";
 
 // MUI
 function Home() {
+  const { authState } = useContext(AuthContext);
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
-  const { authState } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!sessionStorage.getItem("token")) {
+    if (!sessionStorage.getItem("groupomaniaAndy")) {
       console.log("no token in storage");
       navigate("/login");
       return;
@@ -62,7 +62,9 @@ function Home() {
     } else {
       axios
         .get("http://localhost:3006/posts", {
-          headers: { token: sessionStorage.getItem("token") },
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
         })
         .then((response) => {
           setListOfPosts(response.data.listOfPosts);
@@ -83,7 +85,11 @@ function Home() {
       .post(
         "http://localhost:3006/like",
         { PostId: postId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         console.log(response.data);
@@ -125,19 +131,47 @@ function Home() {
       });
   };
 
+  const deletePost = (postId) => {
+    axios
+      .delete(`http://localhost:3006/posts/${postId}`, {
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
+      })
+      .then((response) => {
+        toast.success(response.data);
+        // render the new list of posts
+        const modifiedPosts = listOfPosts.filter((post) => {
+          if (post.id === postId) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+        setListOfPosts(modifiedPosts);
+      });
+  };
+
   const reportPost = (postId) => {
     axios
       .put(
         `http://localhost:3006/posts/flag/${postId}`,
         { postId: postId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         console.log(response.data);
         toast("Publication signalée !");
         axios
           .get("http://localhost:3006/posts", {
-            headers: { token: sessionStorage.getItem("token") },
+            headers: {
+              token: JSON.parse(sessionStorage.getItem("groupomaniaAndy"))
+                .token,
+            },
           })
           .then((response) => {
             setListOfPosts(response.data.listOfPosts);
@@ -245,6 +279,27 @@ function Home() {
                     <div>{value.Likes && value.Likes.length}</div>
                   </Button>
                   <Divider orientation="vertical" variant="middle" flexItem />
+                  {!isNotAuthor(value) && (
+                    <>
+                      <Button
+                        sx={{ width: 1 }}
+                        aria-label="Delete post"
+                        onClick={() => {
+                          deletePost(value.id);
+                        }}
+                      >
+                        <SvgIcon
+                          sx={{ fontSize: 50, color: red[500] }}
+                          component={DeleteOutlineIcon}
+                        />
+                      </Button>
+                      <Divider
+                        orientation="vertical"
+                        variant="middle"
+                        flexItem
+                      />
+                    </>
+                  )}
                   <Button
                     sx={{ width: 1 }}
                     onClick={() => {

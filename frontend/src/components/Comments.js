@@ -34,7 +34,9 @@ function Comments(props) {
   useEffect(() => {
     axios
       .get(`http://localhost:3006/comments/${postId}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         setComments(response.data);
@@ -49,7 +51,11 @@ function Comments(props) {
       .post(
         `http://localhost:3006/comments`,
         { message: newComment, PostId: postId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         setComments(comments.concat(response.data));
@@ -63,7 +69,9 @@ function Comments(props) {
   const deleteComment = (id) => {
     axios
       .delete(`http://localhost:3006/comments/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then(() => {
         toast.success("Commentaire supprimé !");
@@ -80,7 +88,11 @@ function Comments(props) {
       .put(
         `http://localhost:3006/comments/flag/${commentId}`,
         { commentId: commentId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         toast.success("Commentaire signalé !");

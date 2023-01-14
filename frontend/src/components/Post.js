@@ -44,14 +44,18 @@ function Post() {
   useEffect(() => {
     axios
       .get(`http://localhost:3006/posts/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         setPostObject(response.data);
       });
     axios
       .get(`http://localhost:3006/comments/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then((response) => {
         setComments(response.data);
@@ -63,7 +67,11 @@ function Post() {
       .post(
         `http://localhost:3006/comments`,
         { message: newComment, PostId: id },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         setComments(comments.concat(response.data));
@@ -78,7 +86,9 @@ function Post() {
   const deleteComment = (id) => {
     axios
       .delete(`http://localhost:3006/comments/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then(() => {
         toast.success("Commentaire supprimé !");
@@ -95,7 +105,11 @@ function Post() {
       .put(
         `http://localhost:3006/comments/flag/${commentId}`,
         { commentId: commentId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then((response) => {
         toast.success("Commentaire signalé !");
@@ -114,7 +128,9 @@ function Post() {
   const deletePost = (id) => {
     axios
       .delete(`http://localhost:3006/posts/${id}`, {
-        headers: { token: sessionStorage.getItem("token") },
+        headers: {
+          token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+        },
       })
       .then(() => {
         navigate("/");
@@ -127,7 +143,11 @@ function Post() {
       .put(
         `http://localhost:3006/posts/unflag/${postId}`,
         { postId: postId },
-        { headers: { token: sessionStorage.getItem("token") } }
+        {
+          headers: {
+            token: JSON.parse(sessionStorage.getItem("groupomaniaAndy")).token,
+          },
+        }
       )
       .then(() => {
         navigate("/");
